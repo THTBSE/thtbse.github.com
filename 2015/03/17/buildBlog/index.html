@@ -4,22 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Frank&#39;s Home</title>
+    <title>搭建github博客的要点 | Frank&#39;s Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Frank">
     
 
     
-    <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Frank's Home">
-<meta property="og:url" content="/index.html">
+    <meta name="description" content="github部分这部分比较轻松，跟着github的教程一步步走就成功了教程在此
+布置博客之前以为github那部分完成以后，打开链接就能有基本的博客框架出现了，结果发现就只有index.html里面的那句“hello,world”！顿感眼前一黑，难道我要用自己只粗略浏览过的前端知识来完成整个博客？难以想象！还好一搜索，发现有很多搭建个人博客的简便方法。hexo就很不错。cnfeat这个教程讲的挺不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建github博客的要点">
+<meta property="og:url" content="/2015/03/17/buildBlog/index.html">
 <meta property="og:site_name" content="Frank's Home">
-<meta property="og:description">
+<meta property="og:description" content="github部分这部分比较轻松，跟着github的教程一步步走就成功了教程在此
+布置博客之前以为github那部分完成以后，打开链接就能有基本的博客框架出现了，结果发现就只有index.html里面的那句“hello,world”！顿感眼前一黑，难道我要用自己只粗略浏览过的前端知识来完成整个博客？难以想象！还好一搜索，发现有很多搭建个人博客的简便方法。hexo就很不错。cnfeat这个教程讲的挺不">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Frank's Home">
-<meta name="twitter:description">
+<meta name="twitter:title" content="搭建github博客的要点">
+<meta name="twitter:description" content="github部分这部分比较轻松，跟着github的教程一步步走就成功了教程在此
+布置博客之前以为github那部分完成以后，打开链接就能有基本的博客框架出现了，结果发现就只有index.html里面的那句“hello,world”！顿感眼前一黑，难道我要用自己只粗略浏览过的前端知识来完成整个博客？难以想象！还好一搜索，发现有很多搭建个人博客的简便方法。hexo就很不错。cnfeat这个教程讲的挺不">
 
     
     <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
@@ -72,12 +75,10 @@
 </div>
     </header>
     <div id="container">
-      <div id="main">
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
   <h1 itemprop="name">
     
       <a href="/2015/03/17/buildBlog/" title="搭建github博客的要点" itemprop="url">搭建github博客的要点</a>
@@ -91,20 +92,22 @@
     
   </p>
 </header>
-    <div class="article-content">
-        
-        <h3 id="github部分">github部分</h3><p>这部分比较轻松，跟着github的教程一步步走就成功了<br><a href="https://pages.github.com/" target="_blank" rel="external">教程在此</a></p>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#github部分"><span class="toc-number">1.</span> <span class="toc-text">github部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#布置博客"><span class="toc-number">2.</span> <span class="toc-text">布置博客</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="github部分">github部分</h3><p>这部分比较轻松，跟着github的教程一步步走就成功了<br><a href="https://pages.github.com/" target="_blank" rel="external">教程在此</a></p>
 <h3 id="布置博客">布置博客</h3><p>之前以为github那部分完成以后，打开链接就能有基本的博客框架出现了，结果发现就只有index.html里面的那句“hello,world”！顿感眼前一黑，难道我要用自己只粗略浏览过的前端知识来完成整个博客？难以想象！还好一搜索，发现有很多搭建个人博客的简便方法。<a href="http://hexo.io/docs/asset-folders.html" target="_blank" rel="external">hexo</a>就很不错。<a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">cnfeat</a>这个教程讲的挺不错的，很详细，跟着一步步来，安装node.js,git我本来就有了，就不用安装了。之后安装hexo，对照着一步步配置。然后问题就来了—我输入hexo server这个命令，得到的结果告诉我hexo没有这个命令，搜索了也找不到原因，打开hexo的<a href="http://hexo.io/docs/commands.html" target="_blank" rel="external">commands</a>页面又有server命令，还以为是我的hexo版本太低，重装、更新都还是一样。还好在hexo文档的<a href="http://hexo.io/docs/server.html" target="_blank" rel="external">这个</a>页面发现了原因</p>
 <pre><code>&gt; Server was separated <span class="built_in">from</span> <span class="operator">the</span> main module <span class="operator">in</span> Hexo <span class="number">3.</span> You have <span class="built_in">to</span> install hexo-server <span class="keyword">before</span> start <span class="keyword">using</span>.
 </code></pre><p>原来还要安装一遍，果然，安装完以后hexo server命令就可以用了。<br><br>之后还遇到一个问题，在准备deploy的时候。出现<em>ERROR deployer not found github</em>，还是到了hexo官方文档查看，可能是版本问题，在deploy下面的type不填github，填git就好。然后再执行npm install hexo-deployer-git —save。之后再hexo deploy就大功告成啦。<br><br>现在的问题是，markdown的语法我还是渣渣，还要学学才能愉快的写blog，哈哈</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
+  
+	</div>
+		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
 
@@ -112,75 +115,43 @@
 
 
 
-
-<div class="comments-count">
+	<div class="article-share" id="share">
 	
-</div>
+	  <div data-url="/2015/03/17/buildBlog/" data-title="搭建github博客的要点 | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
 
 </footer>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/17/hello-world/" title="Hello Blog" itemprop="url">Hello Blog</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-17T13:57:00.585Z" itemprop="datePublished"> 发表于 2015-03-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/03/17/hello-world/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
+   	       
+	</article>
 	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/03/17/hello-world/"  title="Hello Blog">
+ <strong>下一篇：</strong><br/> 
+ <span>Hello Blog
+</span>
+</a>
 </div>
 
-</footer>
+</nav>
 
+	
 
-    </article>
-
-
-
-
-
-
-
-</div>
+</div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#github部分"><span class="toc-number">1.</span> <span class="toc-text">github部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#布置博客"><span class="toc-number">2.</span> <span class="toc-text">布置博客</span></a></li></ol>
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -279,6 +250,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
@@ -298,6 +271,67 @@ $(document).ready(function(){
 });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
 
 
 
@@ -306,6 +340,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 
@@ -333,4 +388,4 @@ $(document).ready(function(){
 <!-- MathJax End -->
 
   </body>
- </html>
+</html>
