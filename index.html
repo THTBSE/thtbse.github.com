@@ -94,7 +94,7 @@
     <div class="article-content">
         
         <h1 id="介绍">介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，它只要扫描两次数据集，然后构建出FP树，再对FP树进行挖掘即可。可以简单的理解为，把数据集的数据信息都压缩到FP树这个结构当中。这篇文章主要分以下几个点。</p>
-<p><strong>1.FP树的构建</strong><br><strong>2.获取条件模式基</strong><br><strong>3.构建FP条件树并获取频繁项集</strong><br><strong>4.完整代码</strong></p>
+<p><strong>1.FP树的构建</strong><br><strong>2.获取条件模式基</strong><br><strong>3.构建FP条件树并获取频繁项集</strong><br><strong>4.FPGrowth应用实例</strong><br><strong>5.完整代码</strong></p>
         
         
         <p class="article-more-link">

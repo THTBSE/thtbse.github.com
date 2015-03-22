@@ -21,6 +21,7 @@
 <meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg2.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:qim0OLhgkGyadp9vSXwdhK5-dxs">
 <meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg3.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:JN9Sx3sCl4Nj0yPdkjfGr35RMAw">
 <meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg4.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:imcKH2uZiDdv2xnTLd9TZLwWCmQ">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg5.png?attname=&e=1427116450&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:4FA2sX9boeZdu-0NEkdCR3onx_Q">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FP-Growth算法">
 <meta name="twitter:description" content="介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，">
@@ -98,12 +99,12 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP树的构建"><span class="toc-number">2.</span> <span class="toc-text">FP树的构建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取条件模式基"><span class="toc-number">3.</span> <span class="toc-text">获取条件模式基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-遍历headerTable的每一项，用“牛奶”举例"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.遍历headerTable的每一项，用“牛奶”举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对每条路径上的节点，计数值都改为牛奶的计数"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.对每条路径上的节点，计数值都改为牛奶的计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建FP条件树并获取频繁项集"><span class="toc-number">4.</span> <span class="toc-text">构建FP条件树并获取频繁项集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">5.</span> <span class="toc-text">完整代码</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP树的构建"><span class="toc-number">2.</span> <span class="toc-text">FP树的构建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取条件模式基"><span class="toc-number">3.</span> <span class="toc-text">获取条件模式基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-遍历headerTable的每一项，用“牛奶”举例"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.遍历headerTable的每一项，用“牛奶”举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对每条路径上的节点，计数值都改为牛奶的计数"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.对每条路径上的节点，计数值都改为牛奶的计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建FP条件树并获取频繁项集"><span class="toc-number">4.</span> <span class="toc-text">构建FP条件树并获取频繁项集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP-Growth应用实例"><span class="toc-number">5.</span> <span class="toc-text">FP-Growth应用实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">6.</span> <span class="toc-text">完整代码</span></a></li></ol>
 		
 		</div>
 		
 		<h1 id="介绍">介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，它只要扫描两次数据集，然后构建出FP树，再对FP树进行挖掘即可。可以简单的理解为，把数据集的数据信息都压缩到FP树这个结构当中。这篇文章主要分以下几个点。</p>
-<p><strong>1.FP树的构建</strong><br><strong>2.获取条件模式基</strong><br><strong>3.构建FP条件树并获取频繁项集</strong><br><strong>4.完整代码</strong></p>
+<p><strong>1.FP树的构建</strong><br><strong>2.获取条件模式基</strong><br><strong>3.构建FP条件树并获取频繁项集</strong><br><strong>4.FPGrowth应用实例</strong><br><strong>5.完整代码</strong></p>
 <a id="more"></a>
 <h1 id="FP树的构建">FP树的构建</h1><p>这部分的图例就不自己画了，转载自<a href="http://www.cnblogs.com/zhangchaoyang/articles/2198946.html" target="_blank" rel="external">http://www.cnblogs.com/zhangchaoyang/articles/2198946.html</a>，作者：Orisun。<br></p>
 <p>假设有数据集如下：<br>1.牛奶，鸡蛋，面包，薯片<br>2.鸡蛋，爆米花，薯片，啤酒<br>3.鸡蛋，面包，薯片<br>4.牛奶，鸡蛋，面包，爆米花，薯片，啤酒<br>5.牛奶，面包，啤酒<br>6.鸡蛋，面包，啤酒<br>7.牛奶，面包，薯片<br>8.牛奶，鸡蛋，面包，黄油，薯片<br>9.牛奶，鸡蛋，黄油，薯片</p>
@@ -210,7 +211,60 @@
 <span class="command">   return</span> cpbs
 </code></pre></li>
 </ol>
-<h1 id="构建FP条件树并获取频繁项集">构建FP条件树并获取频繁项集</h1><p>有了条件模式基，再对每个前缀的条件模式基构建FP树，这时称为FP条件树，但其实构建方法与FP树基本一样，只不过创建每个节点的时候，计数值不一定从1开始，而是引用cpb中每条记录的计数值。之后再用前缀递归的与这颗条件树组合，就可以得到我们需要的频繁项集啦。</p>
+<h1 id="构建FP条件树并获取频繁项集">构建FP条件树并获取频繁项集</h1><p>有了条件模式基，再对每个前缀的条件模式基构建FP树，这时称为FP条件树，但其实构建方法与FP树基本一样，只不过创建每个节点的时候，计数值不一定从1开始，而是引用cpb中每条记录的计数值。根据“牛奶”为前缀的cpb构建的FP条件树如下图所示：<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg5.png?attname=&amp;e=1427116450&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:4FA2sX9boeZdu-0NEkdCR3onx_Q" alt=""></p>
+<p>接下来，以“牛奶”为前缀，仍然是类似<strong>中序遍历</strong>的方法递归的遍历这颗条件树，就可以得到需要的频繁项集了。说的详细一点吧。</p>
+<p><code>STEP 1</code>:先得到“牛奶”的单项集，当然是把之前cpb中每一条的记录的计数值相加，所以有{牛奶：6}。</p>
+<p><code>STEP 2</code>:从根节点开始递归，用牛奶与它的每一个子节点求并集，得到频繁项集，以子节点的计数值作为该频繁项集的计数。如“薯片”节点并“牛奶”，得到集合{牛奶，薯片：5}。然后再把薯片节点作为根节点，把集合{薯片，牛奶}作为前缀与薯片的子节点求并。就可以得到{牛奶，薯片，鸡蛋：4}，{牛奶，薯片，面包：1}。以此类推，如果遇上某个集合已经存在的情况，则把该集合当前的计数值加上原先的计数值即可。</p>
+<p>这部分的代码如下：</p>
+<pre><code><span class="comment">#Set in cpb ---&gt; ['x','y','z',5] </span>
+<span class="comment">#Set == 1 represents the prefix itself ,just not create cfp tree.</span>
+<span class="function"><span class="keyword">def</span> <span class="title">CreateCFPTree</span><span class="params">(self,cpb)</span>:</span>
+    cfpTree = TreeNode(<span class="string">'root'</span>)
+    <span class="keyword">for</span> Set <span class="keyword">in</span> cpb:
+        <span class="keyword">if</span> len(Set) == <span class="number">1</span>:
+            <span class="keyword">continue</span>
+        currTree = cfpTree
+        <span class="keyword">for</span> item <span class="keyword">in</span> Set[:-<span class="number">1</span>]:
+            <span class="keyword">if</span> item <span class="keyword">in</span> currTree.children:
+                currTree.children[item].count += Set[-<span class="number">1</span>]
+            <span class="keyword">else</span>:
+                currTree.children[item] = TreeNode(item,currTree,Set[-<span class="number">1</span>])
+            currTree = currTree.children[item]
+    <span class="keyword">return</span> cfpTree
+
+<span class="comment">#freqSets in dict ,key is frozenset() ,value is support </span>
+<span class="function"><span class="keyword">def</span> <span class="title">GetFreqSet</span><span class="params">(self,cfpTree,freqSets)</span>:</span>
+    <span class="keyword">if</span> cfpTree.item != <span class="string">'root'</span>:
+        <span class="keyword">for</span> p <span class="keyword">in</span> freqSets.keys():
+            Set = p | frozenset([cfpTree.item])
+            <span class="keyword">if</span> Set <span class="keyword">in</span> freqSets:
+                freqSets[Set] += cfpTree.count
+            <span class="keyword">else</span>:
+                freqSets[Set] = cfpTree.count
+    <span class="keyword">for</span> ckey <span class="keyword">in</span> cfpTree.children:
+        self.GetFreqSet(cfpTree.children[ckey],freqSets)
+</code></pre><h1 id="FP-Growth应用实例">FP-Growth应用实例</h1><p>测试过几个应用实例，其中用了《机器学习实战》中的’kosarak.dat’，有100万条数据，每条数据是浏览的新闻的标签，找出被浏览10万次以上的新闻的频繁项集。虽然100万条数据，但是很快，几秒钟就出结果了。但是得到的只是一堆标签，连对应的什么新闻都不知道，是不是很没有意思？所以我就想，不如我去<a href="http://www.zhihu.com" target="_blank" rel="external">知乎</a>上面把我所关注的人在24小时内关注、点赞、提问、回答过的问题（包括专栏）都抓取下来，每个关注对象的动态作为样本，每个URL作为事件。于是我得到了如下数据集<a href="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/dataSet.txt" target="_blank" rel="external">dataSet</a>，里面以整数1,2,3,4标注了每个URL，对应的URL保存在<a href="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/urlTable.txt#" target="_blank" rel="external">URLTable</a>，接下来就用FP-Growth算法跑一遍吧，看看哪些问题比较热门，把最小支持度minSupport设为4。最终结果如下：</p>
+<pre><code><span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">1</span>])</span></span> Support--&gt;<span class="number">7</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">130</span>, <span class="number">3</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">130</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">3</span>])</span></span> Support--&gt;<span class="number">7</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">39</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">40</span>])</span></span> Support--&gt;<span class="number">5</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">9</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">10</span>])</span></span> Support--&gt;<span class="number">5</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">43</span>])</span></span> Support--&gt;<span class="number">6</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">13</span>])</span></span> Support--&gt;<span class="number">5</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">141</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">81</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">19</span>])</span></span> Support--&gt;<span class="number">6</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">3</span>, <span class="number">19</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">85</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">104</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">72</span>])</span></span> Support--&gt;<span class="number">5</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">2</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">28</span>])</span></span> Support--&gt;<span class="number">4</span>
+<span class="function"><span class="title">frozenset</span><span class="params">([<span class="number">62</span>])</span></span> Support--&gt;<span class="number">5</span>
+</code></pre><p>因为我关注的人比较少，所以频繁项集也不会太多啦~你如果也玩知乎，可以一试。</p>
 <h1 id="完整代码"><a href="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/FPGrowth.py" target="_blank" rel="external">完整代码</a></h1>  
 	</div>
 		<footer class="article-footer clearfix">
@@ -260,7 +314,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP树的构建"><span class="toc-number">2.</span> <span class="toc-text">FP树的构建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取条件模式基"><span class="toc-number">3.</span> <span class="toc-text">获取条件模式基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-遍历headerTable的每一项，用“牛奶”举例"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.遍历headerTable的每一项，用“牛奶”举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对每条路径上的节点，计数值都改为牛奶的计数"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.对每条路径上的节点，计数值都改为牛奶的计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建FP条件树并获取频繁项集"><span class="toc-number">4.</span> <span class="toc-text">构建FP条件树并获取频繁项集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">5.</span> <span class="toc-text">完整代码</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP树的构建"><span class="toc-number">2.</span> <span class="toc-text">FP树的构建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取条件模式基"><span class="toc-number">3.</span> <span class="toc-text">获取条件模式基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-遍历headerTable的每一项，用“牛奶”举例"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.遍历headerTable的每一项，用“牛奶”举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对每条路径上的节点，计数值都改为牛奶的计数"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.对每条路径上的节点，计数值都改为牛奶的计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建FP条件树并获取频繁项集"><span class="toc-number">4.</span> <span class="toc-text">构建FP条件树并获取频繁项集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP-Growth应用实例"><span class="toc-number">5.</span> <span class="toc-text">FP-Growth应用实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">6.</span> <span class="toc-text">完整代码</span></a></li></ol>
  
   </div>
 
