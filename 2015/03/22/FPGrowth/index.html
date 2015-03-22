@@ -1,0 +1,525 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>FP-Growth算法 | Frank&#39;s Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Frank">
+    
+
+    
+    <meta name="description" content="介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FP-Growth算法">
+<meta property="og:url" content="/2015/03/22/FPGrowth/index.html">
+<meta property="og:site_name" content="Frank's Home">
+<meta property="og:description" content="介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg1.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:RvTftVe5DsF8h2w94g7Alz3nK_8">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg2.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:qim0OLhgkGyadp9vSXwdhK5-dxs">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg3.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:JN9Sx3sCl4Nj0yPdkjfGr35RMAw">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg4.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:imcKH2uZiDdv2xnTLd9TZLwWCmQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FP-Growth算法">
+<meta name="twitter:description" content="介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Frank&#39;s Home" title="Frank&#39;s Home"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Frank&#39;s Home">Frank&#39;s Home</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/22/FPGrowth/" title="FP-Growth算法" itemprop="url">FP-Growth算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-22T01:15:13.000Z" itemprop="datePublished"> 发表于 2015-03-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP树的构建"><span class="toc-number">2.</span> <span class="toc-text">FP树的构建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取条件模式基"><span class="toc-number">3.</span> <span class="toc-text">获取条件模式基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-遍历headerTable的每一项，用“牛奶”举例"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.遍历headerTable的每一项，用“牛奶”举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对每条路径上的节点，计数值都改为牛奶的计数"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.对每条路径上的节点，计数值都改为牛奶的计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建FP条件树并获取频繁项集"><span class="toc-number">4.</span> <span class="toc-text">构建FP条件树并获取频繁项集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">5.</span> <span class="toc-text">完整代码</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="介绍">介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，它只要扫描两次数据集，然后构建出FP树，再对FP树进行挖掘即可。可以简单的理解为，把数据集的数据信息都压缩到FP树这个结构当中。这篇文章主要分以下几个点。</p>
+<p><strong>1.FP树的构建</strong><br><strong>2.获取条件模式基</strong><br><strong>3.构建FP条件树并获取频繁项集</strong><br><strong>4.完整代码</strong></p>
+<a id="more"></a>
+<h1 id="FP树的构建">FP树的构建</h1><p>这部分的图例就不自己画了，转载自<a href="http://www.cnblogs.com/zhangchaoyang/articles/2198946.html" target="_blank" rel="external">http://www.cnblogs.com/zhangchaoyang/articles/2198946.html</a>，作者：Orisun。<br></p>
+<p>假设有数据集如下：<br>1.牛奶，鸡蛋，面包，薯片<br>2.鸡蛋，爆米花，薯片，啤酒<br>3.鸡蛋，面包，薯片<br>4.牛奶，鸡蛋，面包，爆米花，薯片，啤酒<br>5.牛奶，面包，啤酒<br>6.鸡蛋，面包，啤酒<br>7.牛奶，面包，薯片<br>8.牛奶，鸡蛋，面包，黄油，薯片<br>9.牛奶，鸡蛋，黄油，薯片</p>
+<p><code>First Step</code>:扫描数据集，每项商品按频数递减排序，并删除频数小于最小支持度minSupport的商品。这里的最小支持度与Apriori不同，直接用频数而不是用百分比。（第一次扫描数据库）</p>
+<p>得到如下排序。薯片:7鸡蛋:7面包:7牛奶:6啤酒:4                       （这里我们令minSupport=3）</p>
+<p><code>Seconde Step</code>:对于每一条购买记录，按照以上顺序重新排序。（第二次也是最后一次扫描数据库）<br>用python编写代码的时候，把每一条记录用set()包装一下，C++则用set&lt;&gt;。目的是让每个商品（事件）在每一条记录中有固定的先后顺序，便于之后构建FP树。经过排序，我们可以得到如下数据集。</p>
+<p>1.薯片,鸡蛋,面包,牛奶<br>2.薯片,鸡蛋,啤酒<br>3.薯片,鸡蛋,面包<br>4.薯片,鸡蛋,面包,牛奶,啤酒<br>5.面包,牛奶,啤酒<br>6.鸡蛋,面包,啤酒<br>7.薯片,面包,牛奶<br>8.薯片,鸡蛋,面包,牛奶<br>9.薯片,鸡蛋,牛奶</p>
+<p><code>Third Step</code>:把上述的各条记录依次插入到FP树当中。下面几幅图清晰明了的说明了插入FP树的规则。<br>插入第一条（薯片，鸡蛋，面包，牛奶）<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg1.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:RvTftVe5DsF8h2w94g7Alz3nK_8" alt=""><br>插入第二条（薯片，鸡蛋，啤酒）<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg2.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:qim0OLhgkGyadp9vSXwdhK5-dxs" alt=""><br>插入第三条（薯片，鸡蛋，面包）<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg3.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:JN9Sx3sCl4Nj0yPdkjfGr35RMAw" alt=""></p>
+<p>从这三幅图应该可以明白，插入的规则就是，每次都从树的跟节点开始，如果商品在当前节点的子节点中，则子节点的计数增加1，否则新增一个子节点。最终的FP树如下图所示。<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg4.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:imcKH2uZiDdv2xnTLd9TZLwWCmQ" alt=""></p>
+<p>是不是与传统的树结构有点不一样？那些<strong>虚线</strong>是什么呢？这是用来构建条件模式基的，留到下一节说。这里就说怎么将他们连起来。从上图可以看出，这是每一样商品，逐个连接FP树中与它相同的商品构成的连接。连接的过程很简单，首先新建一个表头headerTable，代表每个商品。然后用类似<strong>二叉树中序遍历</strong>的办法从FP树的根节点开始递归遍历。比如到达薯片项时，headerTable[薯片]为空，则headerTable[薯片] = currNode（当前节点）。再令PrevNode[薯片] = currNode。下一次再遇到薯片的时候，就令PrevNode[薯片].next = currNode，并更新PrevNode[薯片]。遍历完FP树，也就完成了连接过程。python实现的代码如下。</p>
+<pre><code><span class="comment">#树的节点</span>
+<span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span><span class="params">()</span>:</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,item,parent=None,count=<span class="number">1</span>)</span>:</span>
+        self.item = item
+        self.count = count
+        self.parent = parent
+        self.children = {}
+        self.next = <span class="keyword">None</span>
+
+<span class="comment">#连接节点</span>
+<span class="function"><span class="keyword">def</span> <span class="title">LinkNodes</span><span class="params">(self,root,prevNode=None)</span>:</span>
+    <span class="keyword">if</span> root.item == <span class="string">'root'</span>:
+        prevNode = {}
+    <span class="keyword">elif</span> <span class="keyword">not</span> root.item <span class="keyword">in</span> self.headerPath:
+        self.headerPath[root.item] = root 
+        prevNode[root.item] = root 
+    <span class="keyword">else</span>:
+        prevNode[root.item].next = root 
+        prevNode[root.item] = root 
+    <span class="keyword">for</span> ckey <span class="keyword">in</span> root.children:
+        self.LinkNodes(root.children[ckey],prevNode)
+
+<span class="comment">#递归创建FP树</span>
+<span class="function"><span class="keyword">def</span> <span class="title">CreateTree</span><span class="params">(self,dataSet)</span>:</span>
+    self.fpTree = TreeNode(<span class="string">'root'</span>)
+    <span class="keyword">for</span> Set <span class="keyword">in</span> dataSet:
+        currTree = self.fpTree
+        <span class="keyword">for</span> item <span class="keyword">in</span> Set:
+            <span class="keyword">if</span> item <span class="keyword">in</span> currTree.children:
+                currTree.children[item].count += <span class="number">1</span>
+            <span class="keyword">else</span>:
+                currTree.children[item] = TreeNode(item,currTree)
+            currTree = currTree.children[item]
+    self.LinkNodes(self.fpTree)
+</code></pre><h1 id="获取条件模式基">获取条件模式基</h1><p>完成了FP树的构建，接下来就可以开始对FP树进行挖掘了。首先要获取一个叫做条件模式基(Conditional Pattern Base)的东西，下文简称cpb啦，先说怎么得到cpb。</p>
+<h3 id="1-遍历headerTable的每一项，用“牛奶”举例">1.遍历headerTable的每一项，用“牛奶”举例</h3><p>对headerTable[牛奶]的每个节点，向上遍历它的父节点，一直到FP树的root。再把结果反转一下，可以得到如下结果。在这里这些路径我们称为headerPath。</p>
+<ol>
+<li>薯片：7，鸡蛋：6，牛奶：1</li>
+<li>薯片：7，鸡蛋：6，面包：4，牛奶：3</li>
+<li>薯片：7，面包：1，牛奶：1</li>
+<li>面包：1，牛奶：1</li>
+</ol>
+<h3 id="2-对每条路径上的节点，计数值都改为牛奶的计数">2.对每条路径上的节点，计数值都改为牛奶的计数</h3><ol>
+<li>薯片：1，鸡蛋：1，牛奶：1</li>
+<li>薯片：3，鸡蛋：3，面包：3，牛奶：3</li>
+<li>薯片：1，面包：1，牛奶：1</li>
+<li>面包：1，牛奶：1</li>
+</ol>
+<h3 id="3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</h3><ol>
+<li>薯片：1，鸡蛋：1</li>
+<li>薯片：3，鸡蛋：3，面包：3</li>
+<li>薯片：1，面包：1</li>
+<li><p>面包：1<br>以上结果就是就是cpb啦，获取每一个商品作为前缀的cpb，这一步就完成了。代码如下，略显冗长啊，我还要再想想怎么优化。</p>
+<pre><code>def RecallPathForCPB(self):
+   path = {}
+   cpbs = {}
+   <span class="keyword">for</span> key <span class="keyword">in</span> self.headerPath:
+       node = self.headerPath[key]
+       <span class="keyword">while</span> True:
+           p = []
+           aNode = node
+           <span class="keyword">while</span> aNode.<span class="property">item</span> != 'root':
+               p.append(aNode.<span class="property">item</span>)
+               aNode = aNode.parent
+           p.<span class="property">reverse</span>()
+           p.pop()
+           p.append(node.<span class="command">count</span>)
+           <span class="keyword">if</span> key <span class="keyword">in</span> path:
+               path[key].append(p)
+           <span class="keyword">else</span>:
+               path[key] = [p]
+           node = node.next
+           <span class="keyword">if</span> node == None:
+               break
+   <span class="keyword">for</span> k <span class="keyword">in</span> path.keys():
+       <span class="comment">#print k,path[k]</span>
+       stat = {}
+       cpbs[k] = []
+       <span class="keyword">for</span> freqSet <span class="keyword">in</span> path[k]:
+           <span class="command">count</span> = freqSet[-<span class="number">1</span>]
+           <span class="keyword">for</span> <span class="property">item</span> <span class="keyword">in</span> freqSet[:-<span class="number">1</span>]:
+               <span class="keyword">if</span> <span class="property">item</span> <span class="keyword">in</span> stat:
+                   stat[<span class="property">item</span>] += <span class="command">count</span>
+               <span class="keyword">else</span>:
+                   stat[<span class="property">item</span>] = <span class="command">count</span>
+       <span class="keyword">for</span> freqSet <span class="keyword">in</span> path[k]:
+           <span class="command">count</span> = freqSet[-<span class="number">1</span>]
+           <span class="keyword">if</span> len(freqSet) == <span class="number">1</span>:
+               cpbs[k].append(freqSet)
+               <span class="keyword">continue</span>
+           freqSet = [<span class="property">item</span> <span class="keyword">for</span> <span class="property">item</span> <span class="keyword">in</span> freqSet[:-<span class="number">1</span>] <span class="keyword">if</span> stat[<span class="property">item</span>] &gt;= self.minSupport]
+           freqSet.append(<span class="command">count</span>)
+           cpbs[k].append(freqSet)
+<span class="command">   return</span> cpbs
+</code></pre></li>
+</ol>
+<h1 id="构建FP条件树并获取频繁项集">构建FP条件树并获取频繁项集</h1><p>有了条件模式基，再对每个前缀的条件模式基构建FP树，这时称为FP条件树，但其实构建方法与FP树基本一样，只不过创建每个节点的时候，计数值不一定从1开始，而是引用cpb中每条记录的计数值。之后再用前缀递归的与这颗条件树组合，就可以得到我们需要的频繁项集啦。</p>
+<h1 id="完整代码"><a href="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/FPGrowth.py" target="_blank" rel="external">完整代码</a></h1>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/数据挖掘/">数据挖掘</a><a href="/tags/无监督学习/">无监督学习</a><a href="/tags/机器学习/">机器学习</a><a href="/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="/2015/03/22/FPGrowth/" data-title="FP-Growth算法 | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/03/18/Apriori/"  title="Apriori算法">
+ <strong>下一篇：</strong><br/> 
+ <span>Apriori算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FP树的构建"><span class="toc-number">2.</span> <span class="toc-text">FP树的构建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#获取条件模式基"><span class="toc-number">3.</span> <span class="toc-text">获取条件模式基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-遍历headerTable的每一项，用“牛奶”举例"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.遍历headerTable的每一项，用“牛奶”举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对每条路径上的节点，计数值都改为牛奶的计数"><span class="toc-number">3.0.2.</span> <span class="toc-text">2.对每条路径上的节点，计数值都改为牛奶的计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.拿掉“牛奶”作为前缀，并删除记录中总数小于minSupport(3)的商品</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建FP条件树并获取频繁项集"><span class="toc-number">4.</span> <span class="toc-text">构建FP条件树并获取频繁项集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">5.</span> <span class="toc-text">完整代码</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/无监督学习/" title="无监督学习">无监督学习<sup>2</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Talk is cheap,show me the code. <br/>
+			I like Python.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/THTBSE" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="https://www.zhihu.com/people/heap_Frank" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="Frank">Frank</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+  </body>
+</html>
