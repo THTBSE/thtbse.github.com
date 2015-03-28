@@ -4,22 +4,28 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hello Blog | Frank&#39;s Home</title>
+    <title>朴素贝叶斯 | Frank&#39;s Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Frank">
     
 
     
-    <meta name="description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+    <meta name="description" content="原理朴素贝叶斯是有监督学习的一种分类算法。一句话概括利用朴素贝叶斯进行分类的过程即：求给定输入x的条件下，类别Y=Ck的概率，k=1,2,3…N，找出最大的那个概率P(Y=Ck | X = x)，对应的Ck则是x的类别。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello Blog">
-<meta property="og:url" content="/2015/03/17/hello-world/index.html">
+<meta property="og:title" content="朴素贝叶斯">
+<meta property="og:url" content="/2015/03/28/naiveBayes/index.html">
 <meta property="og:site_name" content="Frank's Home">
-<meta property="og:description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+<meta property="og:description" content="原理朴素贝叶斯是有监督学习的一种分类算法。一句话概括利用朴素贝叶斯进行分类的过程即：求给定输入x的条件下，类别Y=Ck的概率，k=1,2,3…N，找出最大的那个概率P(Y=Ck | X = x)，对应的Ck则是x的类别。">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig1.png?attname=&e=1427597546&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:jqiN8EpV4aqxkM7ZJiyCjVnfmO4">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig2.png?attname=&e=1427597546&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:Cqi8SB_9LMgFjN7dJqBen2ExOks">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig3.png?attname=&e=1427597546&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:-49aVJVx4A2TYfKtZM2vicLVUEs">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig4.png?attname=&e=1427597546&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:NK64L9kHrxcWPkC3fuHamdAG624">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig5.png?attname=&e=1427597546&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:pZhHxfVWM1qAg8_9ttGe0EY9rH0">
+<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig6.png?attname=&e=1427597934&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:9Emzyit3nArdqsRdEuE_IlLw2_0">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello Blog">
-<meta name="twitter:description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+<meta name="twitter:title" content="朴素贝叶斯">
+<meta name="twitter:description" content="原理朴素贝叶斯是有监督学习的一种分类算法。一句话概括利用朴素贝叶斯进行分类的过程即：求给定输入x的条件下，类别Y=Ck的概率，k=1,2,3…N，找出最大的那个概率P(Y=Ck | X = x)，对应的Ck则是x的类别。">
 
     
     <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
@@ -78,14 +84,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/03/17/hello-world/" title="Hello Blog" itemprop="url">Hello Blog</a>
+      <a href="/2015/03/28/naiveBayes/" title="朴素贝叶斯" itemprop="url">朴素贝叶斯</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-17T13:57:00.585Z" itemprop="datePublished"> 发表于 2015-03-17</time>
+    <time datetime="2015-03-28T01:37:17.000Z" itemprop="datePublished"> 发表于 2015-03-28</time>
     
   </p>
 </header>
@@ -94,17 +100,26 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#原理"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">2.</span> <span class="toc-text">完整代码</span></a></li></ol>
 		
 		</div>
 		
-		<p>终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。</p>
+		<h1 id="原理">原理</h1><p>朴素贝叶斯是有监督学习的一种分类算法。一句话概括利用朴素贝叶斯进行分类的过程即：求给定输入x的条件下，类别Y=Ck的概率，k=1,2,3…N，找出最大的那个概率P(Y=Ck | X = x)，对应的Ck则是x的类别。<br></p>
 <a id="more"></a>
-  
+<p>接下来的问题是，如何求概率<code>P(Y = Ck | X = x)</code>呢？首先，这是一个条件概率，所以可以写成<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig1.png?attname=&amp;e=1427597546&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:jqiN8EpV4aqxkM7ZJiyCjVnfmO4" alt="公式1"><br>P(X = x)用全概率公式展开，上述公式就可以变为<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig2.png?attname=&amp;e=1427597546&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:Cqi8SB_9LMgFjN7dJqBen2ExOks" alt="公式2"><br>其实这个转换也就是<em>贝叶斯公式</em>。<code>P(Y=Ck)</code>比较容易求解，只要算出训练集中Y=Ck的频率|Ck| / |D|（<code>|Ck|</code>是训练集中类别Y=Ck的样本数，<code>|D|</code>是训练集样本的总数）即是概率，这是一个先验概率。现在的问题是，如何求解<code>P(X=x|Y=Ck)</code>呢？这就是朴素贝叶斯法的关键了，朴素贝叶斯法对对条件概率分布做了<em>条件独立性假设</em>，这是一个较强的假设，朴素贝叶斯也就是由此得名。具体的有如下公式<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig3.png?attname=&amp;e=1427597546&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:-49aVJVx4A2TYfKtZM2vicLVUEs" alt="公式3"><br>x(j)是输入x的第j个特征，从这里可以看出，整个朴素贝叶斯的训练过程，多数时间用在计算Y=Ck的条件下，X在每一维特征上所取的每个值的概率。比如输入X是一个二维向量(x1,x2)。 x1可能的取值有[1,2], x2可能的取值有[A,B]。Y可能的取值有[0,1]。那么就要算出P(X1 = 1 | 0)，P(X1 = 2 | 0), P(X2 = A | 0), P(X2 = B | 0), P(X1 = 1 | 1), P(X1 = 2 | 1), P(X2 = A | 1), P(X2 = B | 1)。预先算出这些概率以后，对每一个输入，查询每一个特征的条件概率，代入公式得到结果，再比较，就可以完成分类了。<br></p>
+<p>把上面三个公式归纳一下得到<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig4.png?attname=&amp;e=1427597546&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:NK64L9kHrxcWPkC3fuHamdAG624" alt="公式4"><br>上述公式的分母对于所有Ck都是一样的，因此朴素贝叶斯分类器可以表示为<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig5.png?attname=&amp;e=1427597546&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:pZhHxfVWM1qAg8_9ttGe0EY9rH0" alt="公式5"></p>
+<p>还有一个小问题，这么算的话，如果某个概率P(X|Ck) = 0 那会影响到后验概率的计算，所以计算P(X|Ck)的公式写成<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/Nbfig6.png?attname=&amp;e=1427597934&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:9Emzyit3nArdqsRdEuE_IlLw2_0" alt="公式6"></p>
+<p>Sj是某一维特征的个数，lambda = 1时就称为拉普拉斯平滑。代码比较少，就不分开贴了，下面直接给github连接。</p>
+<h1 id="完整代码"><a href="https://github.com/THTBSE/MachineLearning/blob/master/naivebayes/Bayes.py" target="_blank" rel="external">完整代码</a></h1>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/有监督学习/">有监督学习</a><a href="/tags/机器学习/">机器学习</a><a href="/tags/算法/">算法</a>
+  </div>
 
 </div>
 
@@ -112,7 +127,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="/2015/03/17/hello-world/" data-title="Hello Blog | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  <div data-url="/2015/03/28/naiveBayes/" data-title="朴素贝叶斯 | Frank&#39;s Home" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -125,14 +140,14 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/17/buildBlog/" title="搭建github博客的要点">
-  <strong>上一篇：</strong><br/>
-  <span>
-  搭建github博客的要点</span>
+
+<div class="next">
+<a href="/2015/03/22/FPGrowth/"  title="FP-Growth算法">
+ <strong>下一篇：</strong><br/> 
+ <span>FP-Growth算法
+</span>
 </a>
 </div>
-
 
 </nav>
 
@@ -144,7 +159,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#原理"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-number">2.</span> <span class="toc-text">完整代码</span></a></li></ol>
  
   </div>
 
