@@ -4,22 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hello Blog | Frank&#39;s Home</title>
+    <title>word2vec学习笔记(一) | Frank&#39;s Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Frank">
     
 
     
-    <meta name="description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+    <meta name="description" content="word2vec是google发布的，作用是将给定语料库中的每一个词转化为一个向量。把词转化为向量以后，我们就可以基于这个词向量空间做很多的工作了，比如可以找到每个词相似的词，以及对这个词向量空间进行聚类等等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello Blog">
-<meta property="og:url" content="/2015/03/17/hello-world/index.html">
+<meta property="og:title" content="word2vec学习笔记(一)">
+<meta property="og:url" content="/2015/05/09/word2vec/index.html">
 <meta property="og:site_name" content="Frank's Home">
-<meta property="og:description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+<meta property="og:description" content="word2vec是google发布的，作用是将给定语料库中的每一个词转化为一个向量。把词转化为向量以后，我们就可以基于这个词向量空间做很多的工作了，比如可以找到每个词相似的词，以及对这个词向量空间进行聚类等等。">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello Blog">
-<meta name="twitter:description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+<meta name="twitter:title" content="word2vec学习笔记(一)">
+<meta name="twitter:description" content="word2vec是google发布的，作用是将给定语料库中的每一个词转化为一个向量。把词转化为向量以后，我们就可以基于这个词向量空间做很多的工作了，比如可以找到每个词相似的词，以及对这个词向量空间进行聚类等等。">
 
     
     <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
@@ -78,14 +78,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/03/17/hello-world/" title="Hello Blog" itemprop="url">Hello Blog</a>
+      <a href="/2015/05/09/word2vec/" title="word2vec学习笔记(一)" itemprop="url">word2vec学习笔记(一)</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-17T13:57:00.585Z" itemprop="datePublished"> 发表于 2015-03-17</time>
+    <time datetime="2015-05-09T08:12:19.000Z" itemprop="datePublished"> 发表于 2015-05-09</time>
     
   </p>
 </header>
@@ -94,17 +94,32 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#词向量"><span class="toc-number">1.</span> <span class="toc-text">词向量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-One-Hot_Representation"><span class="toc-number">1.1.</span> <span class="toc-text">1.One-Hot Representation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Distributed_Representation"><span class="toc-number">1.2.</span> <span class="toc-text">2.Distributed Representation</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#统计语言模型"><span class="toc-number">2.</span> <span class="toc-text">统计语言模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#word2vec的实现步骤"><span class="toc-number">3.</span> <span class="toc-text">word2vec的实现步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CBOW_(Continuous_Bag-of-Words_Model)"><span class="toc-number">4.</span> <span class="toc-text">CBOW (Continuous Bag-of-Words Model)</span></a></li></ol>
 		
 		</div>
 		
-		<p>终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。</p>
+		<p>word2vec是google发布的，作用是将给定语料库中的每一个词转化为一个向量。把词转化为向量以后，我们就可以基于这个词向量空间做很多的工作了，比如可以找到每个词相似的词，以及对这个词向量空间进行聚类等等。</p>
 <a id="more"></a>
-  
+<h3 id="词向量">词向量</h3><h4 id="1-One-Hot_Representation">1.One-Hot Representation</h4><p>一种简单的将词转为向量的方法称为one-hot representation，比如语料库中有N个词，首先对这N个词编号，每个词的词向量都将有N维，对应该词编号的维度为1，其余全为0。这种表示方法简单粗暴，但是没有办法计算词与词之间的相似性，所以用处不大。</p>
+<h4 id="2-Distributed_Representation">2.Distributed Representation</h4><p>这种办法是通过训练，将每个词映射为<em>K</em>维向量，<em>K</em>是我们给定的参数。这样就可以通过<strong>余弦相似度</strong>或<strong>欧式距离</strong>来判断词的相似度，word2vec里用的也是这种方法。</p>
+<h3 id="统计语言模型">统计语言模型</h3><p>现在还得介绍一下统计语言模型的概念。等等，我们不是在说词向量吗？统计语言模型是什么鬼？这个说来话长，长话短说也就是，在NLP领域里面，经常需要判断一句话是不是自然语言（是不是人话），比如“今天我不想上班”这句话，我们需要利用统计学的方法来判断。这句话经过分词以后是“今天”、“我”、“不想”、“上班”(假定就是这么分词)，它的概率利用各个词的条件概率来表示，也就是<br><br><code>p(s) = p(今天)*p(我|今天)*p(不想|我,今天)*p(上班|我,今天,不想)</code><br><br>看起来很容易，算几个条件概率再连乘就可以了。但是这些条件概率怎么算呢？必须得根据先验知识，也就是从语料库中统计出来。每一句话都要去这么算条件概率是难以想象的，比如某APP社区的总贴子数有5000多万，要逐个去遍历统计算出这几个概率，是完全不现实的。所以科学家们得想其他的办法，首先将语言模型写成如下形式。<br><img src="" alt="w2v1"><br><br>这个Context称为上下文，根据划分Context的不同方法，就有了不同的语言模型。也就是具体的实现中怎么去表示这个Context。word2vec里用了两种语言模型，cbow与skip-gram。都是神经网络，再利用随机梯度下降来训练，word2vec号称是深度学习，其实一点也不深。<br></p>
+<p>那语言模型与词向量又有什么关系呢？其实是为了得到某个语言模型，我们需要把词表示为向量，然后利用机器学习算法进行训练，而这个词向量其实是训练语言模型的一个副作用。但是在word2vec里面，并不关心最后的语言模型是什么，最后的结果反而是这个“副作用”<strong>词向量</strong>。</p>
+<h3 id="word2vec的实现步骤">word2vec的实现步骤</h3><p>我在看word2vec的文章与博客的时候发现在介绍完基本概念以后，往往接下来的都是介绍各种语言模型，然后各种推导公式，对于初学者的我而言，看得云里雾里不明所以。所以总结的时候，我打算在这个时候先写出word2vec的各个实现步骤，接下来看各种概念，数学公式的时候才会明白这些东西跟word2vec有什么关系。</p>
+<p>1.google实现的word2vec的输入文件必须是一个包含若干词汇的文本，词汇与词汇直接以空格隔开，如“今天 是 星期六”。可以所有词表示为一行，也可以有换行符<code>\n</code>，换行符会被替换为<code>&lt;\s&gt;</code>。我们自己实现word2vec时随便定义，只要保证读入的都是单词就好。<br></p>
+<p>2.读取的过程中同时对单词出现的次数进行统计，将所有的词汇用一个哈希表存储。<br></p>
+<p>3.根据各词的词频建立<a href="http://thtbse.github.io/2015/05/09/huffman/" target="_blank" rel="external">哈夫曼树</a>，每个词汇都是哈夫曼树的叶子节点，所有非叶子节点代表了某一类型的词。建立好以后，每个词都有一个哈夫曼编码，如”010”代表从根节点到达这个词的路线：根节点-&gt;左子树-&gt;右子树-&gt;左节点(该词)。</p>
+<p>4.初始化词向量与哈夫曼树的非叶子节点对应的向量，维度是自己给的<em>K</em>，google的代码实现里将词向量每个维度都随机初始化了+- 0.00X的值，哈夫曼的非叶子节点每个维度初始化为0.其实都初始化为0应该也可以，毕竟后面的训练过程是一个漫长的最优化的过程，初始化的数值影响并不大。<br></p>
+<p>5.训练。这也是最关键和最耗时的步骤了，有cbow与skip-gram模型，每个模型可以选用hierarchical sofmax或negative sampling方法。</p>
+<h3 id="CBOW_(Continuous_Bag-of-Words_Model)">CBOW (Continuous Bag-of-Words Model)</h3>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/NLP/">NLP</a><a href="/tags/机器学习/">机器学习</a>
+  </div>
 
 </div>
 
@@ -112,7 +127,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="/2015/03/17/hello-world/" data-title="Hello Blog | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  <div data-url="/2015/05/09/word2vec/" data-title="word2vec学习笔记(一) | Frank&#39;s Home" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -125,14 +140,14 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/17/buildBlog/" title="搭建github博客的要点">
-  <strong>上一篇：</strong><br/>
-  <span>
-  搭建github博客的要点</span>
+
+<div class="next">
+<a href="/2015/05/09/huffman/"  title="哈夫曼树与哈夫曼编码">
+ <strong>下一篇：</strong><br/> 
+ <span>哈夫曼树与哈夫曼编码
+</span>
 </a>
 </div>
-
 
 </nav>
 
@@ -144,7 +159,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#词向量"><span class="toc-number">1.</span> <span class="toc-text">词向量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-One-Hot_Representation"><span class="toc-number">1.1.</span> <span class="toc-text">1.One-Hot Representation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Distributed_Representation"><span class="toc-number">1.2.</span> <span class="toc-text">2.Distributed Representation</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#统计语言模型"><span class="toc-number">2.</span> <span class="toc-text">统计语言模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#word2vec的实现步骤"><span class="toc-number">3.</span> <span class="toc-text">word2vec的实现步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CBOW_(Continuous_Bag-of-Words_Model)"><span class="toc-number">4.</span> <span class="toc-text">CBOW (Continuous Bag-of-Words Model)</span></a></li></ol>
  
   </div>
 
