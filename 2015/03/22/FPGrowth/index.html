@@ -17,11 +17,11 @@
 <meta property="og:url" content="/2015/03/22/FPGrowth/index.html">
 <meta property="og:site_name" content="Frank's Home">
 <meta property="og:description" content="介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，">
-<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg1.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:RvTftVe5DsF8h2w94g7Alz3nK_8">
-<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg2.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:qim0OLhgkGyadp9vSXwdhK5-dxs">
-<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg3.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:JN9Sx3sCl4Nj0yPdkjfGr35RMAw">
-<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg4.png?attname=&e=1427076542&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:imcKH2uZiDdv2xnTLd9TZLwWCmQ">
-<meta property="og:image" content="http://7xi7cw.com1.z0.glb.clouddn.com/fpg5.png?attname=&e=1427116450&token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:4FA2sX9boeZdu-0NEkdCR3onx_Q">
+<meta property="og:image" content="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg1.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg2.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg3.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg4.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg5.png?raw=true">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FP-Growth算法">
 <meta name="twitter:description" content="介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，">
@@ -112,8 +112,8 @@
 <p>得到如下排序。薯片:7鸡蛋:7面包:7牛奶:6啤酒:4                       （这里我们令minSupport=3）</p>
 <p><code>Seconde Step</code>:对于每一条购买记录，按照以上顺序重新排序。（第二次也是最后一次扫描数据库）<br>用python编写代码的时候，把每一条记录用set()包装一下，C++则用set&lt;&gt;。目的是让每个商品（事件）在每一条记录中有固定的先后顺序，便于之后构建FP树。经过排序，我们可以得到如下数据集。</p>
 <p>1.薯片,鸡蛋,面包,牛奶<br>2.薯片,鸡蛋,啤酒<br>3.薯片,鸡蛋,面包<br>4.薯片,鸡蛋,面包,牛奶,啤酒<br>5.面包,牛奶,啤酒<br>6.鸡蛋,面包,啤酒<br>7.薯片,面包,牛奶<br>8.薯片,鸡蛋,面包,牛奶<br>9.薯片,鸡蛋,牛奶</p>
-<p><code>Third Step</code>:把上述的各条记录依次插入到FP树当中。下面几幅图清晰明了的说明了插入FP树的规则。<br>插入第一条（薯片，鸡蛋，面包，牛奶）<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg1.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:RvTftVe5DsF8h2w94g7Alz3nK_8" alt=""><br>插入第二条（薯片，鸡蛋，啤酒）<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg2.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:qim0OLhgkGyadp9vSXwdhK5-dxs" alt=""><br>插入第三条（薯片，鸡蛋，面包）<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg3.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:JN9Sx3sCl4Nj0yPdkjfGr35RMAw" alt=""></p>
-<p>从这三幅图应该可以明白，插入的规则就是，每次都从树的跟节点开始，如果商品在当前节点的子节点中，则子节点的计数增加1，否则新增一个子节点。最终的FP树如下图所示。<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg4.png?attname=&amp;e=1427076542&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:imcKH2uZiDdv2xnTLd9TZLwWCmQ" alt=""></p>
+<p><code>Third Step</code>:把上述的各条记录依次插入到FP树当中。下面几幅图清晰明了的说明了插入FP树的规则。<br>插入第一条（薯片，鸡蛋，面包，牛奶）<br><img src="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg1.png?raw=true" alt=""><br>插入第二条（薯片，鸡蛋，啤酒）<br><img src="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg2.png?raw=true" alt=""><br>插入第三条（薯片，鸡蛋，面包）<br><img src="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg3.png?raw=true" alt=""></p>
+<p>从这三幅图应该可以明白，插入的规则就是，每次都从树的跟节点开始，如果商品在当前节点的子节点中，则子节点的计数增加1，否则新增一个子节点。最终的FP树如下图所示。<br><img src="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg4.png?raw=true" alt=""></p>
 <p>是不是与传统的树结构有点不一样？那些<strong>虚线</strong>是什么呢？这是用来构建条件模式基的，留到下一节说。这里就说怎么将他们连起来。从上图可以看出，这是每一样商品，逐个连接FP树中与它相同的商品构成的连接。连接的过程很简单，首先新建一个表头headerTable，代表每个商品。然后用类似<strong>二叉树中序遍历</strong>的办法从FP树的根节点开始递归遍历。比如到达薯片项时，headerTable[薯片]为空，则headerTable[薯片] = currNode（当前节点）。再令PrevNode[薯片] = currNode。下一次再遇到薯片的时候，就令PrevNode[薯片].next = currNode，并更新PrevNode[薯片]。遍历完FP树，也就完成了连接过程。python实现的代码如下。</p>
 <pre><code><span class="comment">#树的节点</span>
 <span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span><span class="params">()</span>:</span>
@@ -211,7 +211,7 @@
 <span class="command">   return</span> cpbs
 </code></pre></li>
 </ol>
-<h1 id="构建FP条件树并获取频繁项集">构建FP条件树并获取频繁项集</h1><p>有了条件模式基，再对每个前缀的条件模式基构建FP树，这时称为FP条件树，但其实构建方法与FP树基本一样，只不过创建每个节点的时候，计数值不一定从1开始，而是引用cpb中每条记录的计数值。根据“牛奶”为前缀的cpb构建的FP条件树如下图所示：<br><img src="http://7xi7cw.com1.z0.glb.clouddn.com/fpg5.png?attname=&amp;e=1427116450&amp;token=1ZuaA8y702KE2WwsO4pARLIVQWHLC7F29wPsasLz:4FA2sX9boeZdu-0NEkdCR3onx_Q" alt=""></p>
+<h1 id="构建FP条件树并获取频繁项集">构建FP条件树并获取频繁项集</h1><p>有了条件模式基，再对每个前缀的条件模式基构建FP树，这时称为FP条件树，但其实构建方法与FP树基本一样，只不过创建每个节点的时候，计数值不一定从1开始，而是引用cpb中每条记录的计数值。根据“牛奶”为前缀的cpb构建的FP条件树如下图所示：<br><img src="https://github.com/THTBSE/MachineLearning/blob/master/FPGrowth/fpg5.png?raw=true" alt=""></p>
 <p>接下来，以“牛奶”为前缀，仍然是类似<strong>中序遍历</strong>的方法递归的遍历这颗条件树，就可以得到需要的频繁项集了。说的详细一点吧。</p>
 <p><code>STEP 1</code>:先得到“牛奶”的单项集，当然是把之前cpb中每一条的记录的计数值相加，所以有{牛奶：6}。</p>
 <p><code>STEP 2</code>:从根节点开始递归，用牛奶与它的每一个子节点求并集，得到频繁项集，以子节点的计数值作为该频繁项集的计数。如“薯片”节点并“牛奶”，得到集合{牛奶，薯片：5}。然后再把薯片节点作为根节点，把集合{薯片，牛奶}作为前缀与薯片的子节点求并。就可以得到{牛奶，薯片，鸡蛋：4}，{牛奶，薯片，面包：1}。以此类推，如果遇上某个集合已经存在的情况，则把该集合当前的计数值加上原先的计数值即可。</p>
