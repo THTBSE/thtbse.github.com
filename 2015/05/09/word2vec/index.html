@@ -17,6 +17,14 @@
 <meta property="og:url" content="/2015/05/09/word2vec/index.html">
 <meta property="og:site_name" content="Frank's Home">
 <meta property="og:description" content="word2vec是google发布的，作用是将给定语料库中的每一个词转化为一个向量。把词转化为向量以后，我们就可以基于这个词向量空间做很多的工作了，比如可以找到每个词相似的词，以及对这个词向量空间进行聚类等等。">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v1.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v2.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v3.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v4.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v5.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v6.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v7.png?raw=true">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/word2vec/w2v8.png?raw=true">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="word2vec学习笔记(一)">
 <meta name="twitter:description" content="word2vec是google发布的，作用是将给定语料库中的每一个词转化为一个向量。把词转化为向量以后，我们就可以基于这个词向量空间做很多的工作了，比如可以找到每个词相似的词，以及对这个词向量空间进行聚类等等。">
@@ -102,7 +110,7 @@
 <a id="more"></a>
 <h3 id="词向量">词向量</h3><h4 id="1-One-Hot_Representation">1.One-Hot Representation</h4><p>一种简单的将词转为向量的方法称为one-hot representation，比如语料库中有N个词，首先对这N个词编号，每个词的词向量都将有N维，对应该词编号的维度为1，其余全为0。这种表示方法简单粗暴，但是没有办法计算词与词之间的相似性，所以用处不大。</p>
 <h4 id="2-Distributed_Representation">2.Distributed Representation</h4><p>这种办法是通过训练，将每个词映射为<em>K</em>维向量，<em>K</em>是我们给定的参数。这样就可以通过<strong>余弦相似度</strong>或<strong>欧式距离</strong>来判断词的相似度，word2vec里用的也是这种方法。</p>
-<h3 id="统计语言模型">统计语言模型</h3><p>现在还得介绍一下统计语言模型的概念。等等，我们不是在说词向量吗？统计语言模型是什么鬼？这个说来话长，长话短说也就是，在NLP领域里面，经常需要判断一句话是不是自然语言（是不是人话），比如“今天我不想上班”这句话，我们需要利用统计学的方法来判断。这句话经过分词以后是“今天”、“我”、“不想”、“上班”(假定就是这么分词)，它的概率利用各个词的条件概率来表示，也就是<br><br><code>p(s) = p(今天)*p(我|今天)*p(不想|我,今天)*p(上班|我,今天,不想)</code><br><br>看起来很容易，算几个条件概率再连乘就可以了。但是这些条件概率怎么算呢？必须得根据先验知识，也就是从语料库中统计出来。每一句话都要去这么算条件概率是难以想象的，比如某APP社区的总贴子数有5000多万，要逐个去遍历统计算出这几个概率，是完全不现实的。所以科学家们得想其他的办法，首先将语言模型写成如下形式。<br><img src="" alt="w2v1"><br><br>这个Context称为上下文，根据划分Context的不同方法，就有了不同的语言模型。也就是具体的实现中怎么去表示这个Context。word2vec里用了两种语言模型，cbow与skip-gram。都是神经网络，再利用随机梯度下降来训练，word2vec号称是深度学习，其实一点也不深。<br></p>
+<h3 id="统计语言模型">统计语言模型</h3><p>现在还得介绍一下统计语言模型的概念。等等，我们不是在说词向量吗？统计语言模型是什么鬼？这个说来话长，长话短说也就是，在NLP领域里面，经常需要判断一句话是不是自然语言（是不是人话），比如“今天我不想上班”这句话，我们需要利用统计学的方法来判断。这句话经过分词以后是“今天”、“我”、“不想”、“上班”(假定就是这么分词)，它的概率利用各个词的条件概率来表示，也就是<br><br><code>p(s) = p(今天)*p(我|今天)*p(不想|我,今天)*p(上班|我,今天,不想)</code><br><br>看起来很容易，算几个条件概率再连乘就可以了。但是这些条件概率怎么算呢？必须得根据先验知识，也就是从语料库中统计出来。每一句话都要去这么算条件概率是难以想象的，比如某APP社区的总贴子数有5000多万，要逐个去遍历统计算出这几个概率，是完全不现实的。所以科学家们得想其他的办法，首先将语言模型写成如下形式。<br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v1.png?raw=true" alt="w2v1"><br><br>这个Context称为上下文，根据划分Context的不同方法，就有了不同的语言模型。也就是具体的实现中怎么去表示这个Context。word2vec里用了两种语言模型，cbow与skip-gram。都是神经网络，再利用随机梯度下降来训练，word2vec号称是深度学习，其实一点也不深。<br></p>
 <p>那语言模型与词向量又有什么关系呢？其实是为了得到某个语言模型，我们需要把词表示为向量，然后利用机器学习算法进行训练，而这个词向量其实是训练语言模型的一个副作用。但是在word2vec里面，并不关心最后的语言模型是什么，最后的结果反而是这个“副作用”<strong>词向量</strong>。</p>
 <h3 id="word2vec的实现步骤">word2vec的实现步骤</h3><p>我在看word2vec的文章与博客的时候发现在介绍完基本概念以后，往往接下来的都是介绍各种语言模型，然后各种推导公式，对于初学者的我而言，看得云里雾里不明所以。所以总结的时候，我打算在这个时候先写出word2vec的各个实现步骤，接下来看各种概念，数学公式的时候才会明白这些东西跟word2vec有什么关系。</p>
 <p>1.google实现的word2vec的输入文件必须是一个包含若干词汇的文本，词汇与词汇直接以空格隔开，如“今天 是 星期六”。可以所有词表示为一行，也可以有换行符<code>\n</code>，换行符会被替换为<code>&lt;\s&gt;</code>。我们自己实现word2vec时随便定义，只要保证读入的都是单词就好。<br></p>
@@ -110,7 +118,14 @@
 <p>3.根据各词的词频建立<a href="http://thtbse.github.io/2015/05/09/huffman/" target="_blank" rel="external">哈夫曼树</a>，每个词汇都是哈夫曼树的叶子节点，所有非叶子节点代表了某一类型的词。建立好以后，每个词都有一个哈夫曼编码，如”010”代表从根节点到达这个词的路线：根节点-&gt;左子树-&gt;右子树-&gt;左节点(该词)。</p>
 <p>4.初始化词向量与哈夫曼树的非叶子节点对应的向量，维度是自己给的<em>K</em>，google的代码实现里将词向量每个维度都随机初始化了+- 0.00X的值，哈夫曼的非叶子节点每个维度初始化为0.其实都初始化为0应该也可以，毕竟后面的训练过程是一个漫长的最优化的过程，初始化的数值影响并不大。<br></p>
 <p>5.训练。这也是最关键和最耗时的步骤了，有cbow与skip-gram模型，每个模型可以选用hierarchical sofmax或negative sampling方法。</p>
-<h3 id="CBOW_(Continuous_Bag-of-Words_Model)">CBOW (Continuous Bag-of-Words Model)</h3>  
+<h3 id="CBOW_(Continuous_Bag-of-Words_Model)">CBOW (Continuous Bag-of-Words Model)</h3><p>先来一张经典的图示<br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v2.png?raw=true" alt="w2v2"><br><br>是不是很像神经网络？对这就是神经网络，只是它比神经网络还要简单。Projection layer可以看成就是神经网络的隐层。从输入层到隐层只是把向量简单的相加。<br></p>
+<p>训练过程的步骤是这样的。<br>1.先从语料库里取出若干个词作为一个句子，然后遍历这个句子的每一个词，记为w(t)。输入层的w(t-2),w(t-1),w(t+1),w(t+2)即为w(t)的上下文，也就是前2个词与后2个词的<strong>词向量</strong>。CBOW模型认为w(t)这个词出现的条件概率与它的上下文都有关。<br></p>
+<p>2.将输入层的几个向量相加，得到隐层的向量，在google的word2vec里面就是<code>neu1</code>。在下文<code>neu1</code>就代表这个和向量。<br></p>
+<p>3.接下来就是隐层到输出层，上图中输出层是w(t)，这很让人迷惑，确切的说并不是输出w(t)这个向量。见下图<br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v3.png?raw=true" alt="w2v3"><br><br>解释一下HuffmanV1 - HuffmanVK。前面已经说过，根据每个词的词频可以建一棵哈夫曼树，所有词都是哈夫曼树的叶子节点，非叶子节点代表了某一类型的词。HuffmanV1到HuffmanVK就是从哈夫曼树的根节点至w(t)这个叶子节点<strong>之前</strong>的路径上的节点所对应的<strong>向量</strong>。令<code>neu1</code>与<code>HuffmanVj</code>点乘，就能得到一系列的<code>Zi</code>，再用激活函数<code>sigmoid(z)</code>计算得到的值，就是这个神经网络的输出了，这一步不就是多元logistic regression么？其中<code>sigmoid(z) = 1 / (1 + e^-z)</code>。</p>
+<p>4.神经网络一定有一个最优化的过程，在得到了输出值以后，如何最优化？在这个问题中，我们感兴趣的是输入层的词向量，以及输出层的那些<code>HuffmanVj</code>向量，它们是我们需要估计的<strong>参数</strong>。从根节点要到达w(t)，必须沿着一条路径，如果从一个节点走向它的<code>左子节点</code>的概率是<code>sigmoid(z)</code>，则走向它右子节点的概率就是<code>1-sigmoid(z)</code>。那么我们希望的结果是，从根节点到达w(t)的概率最大，所以就用<strong>极大似然估计</strong>。似然函数如下<br><br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v4.png?raw=true" alt="w2v4"><br><br><code>code[j]</code>就是<strong>哈夫曼编码</strong>，0代表走向左子节点，1代表走向右子节点。对数似然函数如下。<br><br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v5.png?raw=true" alt="w2v5"><br><br>目标函数有了，接下来就是求梯度了。先求<code>neu1</code>的梯度，根据链式求导法则，如下<br><br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v6.png?raw=true" alt="w2v6"><br><br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v7.png?raw=true" alt="w2v7"><br><br>因为输入层到隐层是通过向量相加，所以输入层每个向量的梯度<strong>等于</strong>隐层<code>neu1</code>的梯度。同理可得，每个Huffman非叶子节点向量的梯度如下<br><br><img src="https://github.com/THTBSE/Images/blob/master/word2vec/w2v8.png?raw=true" alt="w2v8"><br></p>
+<p>利用梯度下降，这里因为是最大化，所以就用梯度上升，对每个<code>HuffmanVj += Gh * alpha</code> ，<code>Vw(t-i) += Gw(t-i) * alpha</code>就可以啦。</p>
+<p>5.按上述步骤开始处理这个句子的下一个词，句子的所有词都处理完毕再从预料库里面载入下一个句子，直到语料库所有词语都处理完，如果语料库特别大的话，这会是一个漫长的过程。</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
