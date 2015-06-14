@@ -1,0 +1,551 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>相似性哈希算法-SimHash | Frank&#39;s Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Frank">
+    
+
+    
+    <meta name="description" content="最近在做UGC社区反垃圾工作，说到反垃圾一般都会先想到垃圾邮件过滤这种经典的例子，算法自然是朴素贝叶斯。只不过运用朴素贝叶斯需要有一个较完备的语料库，以及合理的选取特征词，面对现在比较紧急的任务，只能先想其他的应对办法。观察了一些社区里恶意刷广告的用户，尤其是利用机器大量刷的，都有一个很明显的特征，短时间内发大量重复或相似的信息。那么，只要判断出一系列的文本是重复或及其相似的，那么发这些内容的用户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="相似性哈希算法-SimHash">
+<meta property="og:url" content="/2015/06/14/simhash/index.html">
+<meta property="og:site_name" content="Frank's Home">
+<meta property="og:description" content="最近在做UGC社区反垃圾工作，说到反垃圾一般都会先想到垃圾邮件过滤这种经典的例子，算法自然是朴素贝叶斯。只不过运用朴素贝叶斯需要有一个较完备的语料库，以及合理的选取特征词，面对现在比较紧急的任务，只能先想其他的应对办法。观察了一些社区里恶意刷广告的用户，尤其是利用机器大量刷的，都有一个很明显的特征，短时间内发大量重复或相似的信息。那么，只要判断出一系列的文本是重复或及其相似的，那么发这些内容的用户">
+<meta property="og:image" content="https://github.com/THTBSE/Images/blob/master/simhash/simhash.jpg?raw=true">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="相似性哈希算法-SimHash">
+<meta name="twitter:description" content="最近在做UGC社区反垃圾工作，说到反垃圾一般都会先想到垃圾邮件过滤这种经典的例子，算法自然是朴素贝叶斯。只不过运用朴素贝叶斯需要有一个较完备的语料库，以及合理的选取特征词，面对现在比较紧急的任务，只能先想其他的应对办法。观察了一些社区里恶意刷广告的用户，尤其是利用机器大量刷的，都有一个很明显的特征，短时间内发大量重复或相似的信息。那么，只要判断出一系列的文本是重复或及其相似的，那么发这些内容的用户">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Frank&#39;s Home" title="Frank&#39;s Home"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Frank&#39;s Home">Frank&#39;s Home</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/14/simhash/" title="相似性哈希算法-SimHash" itemprop="url">相似性哈希算法-SimHash</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-14T02:49:48.000Z" itemprop="datePublished"> 发表于 2015-06-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SimHash"><span class="toc-number">1.</span> <span class="toc-text">SimHash</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤一、中文分词"><span class="toc-number">1.0.1.</span> <span class="toc-text">步骤一、中文分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤二、将每个词哈希成n-bit整数"><span class="toc-number">1.0.2.</span> <span class="toc-text">步骤二、将每个词哈希成n-bit整数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤三、每个hash,weight转化为一个向量"><span class="toc-number">1.0.3.</span> <span class="toc-text">步骤三、每个hash,weight转化为一个向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤四、合并上述结果"><span class="toc-number">1.0.4.</span> <span class="toc-text">步骤四、合并上述结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤五、信号函数"><span class="toc-number">1.0.5.</span> <span class="toc-text">步骤五、信号函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码如下"><span class="toc-number">1.0.6.</span> <span class="toc-text">代码如下</span></a></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<p>最近在做UGC社区反垃圾工作，说到反垃圾一般都会先想到垃圾邮件过滤这种经典的例子，算法自然是朴素贝叶斯。只不过运用朴素贝叶斯需要有一个较完备的语料库，以及合理的选取特征词，面对现在比较紧急的任务，只能先想其他的应对办法。观察了一些社区里恶意刷广告的用户，尤其是利用机器大量刷的，都有一个很明显的特征，短时间内发大量重复或相似的信息。那么，只要判断出一系列的文本是重复或及其相似的，那么发这些内容的用户就比较可疑了（当然还要过滤掉一些较短的、正常的常见回复）。接下来的问题就是，判断重复的文本很容易，文本长度相等，所有字符相等就行，但是相似的呢？如果垃圾内容总体上是一样的，只是其中加入一些干扰字符、词语等，就不重复了，但是这也是需要识别出来的。</p>
+<a id="more"></a>
+<p><br></p>
+<p>判断两文本是否相似最简单的办法就是<br>1.将文本分词（此处特指中文文本）；<br>2.统计每个词的词频；<br>3.将两个文本的词集求交得到交集<br>4.计算两个文本完全重复的词数，对交集里的每一个词，取低的词频即是两个文本中该词的重复数，接着再累加。<br>5.将上一步累加的结果，除以较长的文本，得到的比率作为两个文本的重复率，重复率越高则说明越相似。</p>
+<p><br></p>
+<p>上述方法是可行的，但有一个问题就是，当两个文本很长的时候，求交集是比较耗费时间的。特别是社区里面每分钟新增的帖子就接近一万了，对每一个新增的帖要与过往一定时间内的帖都重复一遍上述过程，计算量太大并且没有办法及时反馈结果。试想一下，如果一个广告帖子进来，我们过了半个小时才解决它，它已经起到了传播的效果了。所以必须再找一个能够快速判断文本相似性的算法，那就是SimHash算法了。</p>
+<h1 id="SimHash">SimHash</h1><p>SimHash算法是Google搜索引擎爬虫在爬取网页的时候用来判断网页是否重复的办法，效率是相当高的。基本原理就是将文本通过哈希算法将文本转换为一个n位的二进制数，这个数作为该文本的fingerprint，判断两个文本哈希后结果不同的bit数，如果小于某阈值我们就认为这两个文本是相似的。SimHash算法的流程图如下所示<br><img src="https://github.com/THTBSE/Images/blob/master/simhash/simhash.jpg?raw=true" alt="SimHash流程图"></p>
+<p>举例子就用<strong>“今天是星期天，今天的天气真好”</strong>这句话吧。<br></p>
+<h3 id="步骤一、中文分词">步骤一、中文分词</h3><p>将文本哈希成一个n-bit整数，并不是直接将整个文本扔进哈希算法计算，这样就把整个文本看成一个整体，和直接比较每个字符是否相等的概念是一样的，没有意义。所以首先需要拆分文本，拆分有很多种方法，贪图方便可以用两两分词，比如<code>abcdefg</code>字符串可以拆成ab,bc,cd,de,ef,fg这样，但是试验以后发现，对于大量文本，哈希碰撞太高，也就是说根本不相似的文本，通过这种拆分-哈希方法会被判定为相似。所以在拆分的时候，还是要尽量保持文本的语义，语义的最小单元就是文本中的词汇，所以中文分词这个步骤是少不了的。对于例句，分词并过滤掉停用词后的结果是<code>今天/星期天/今天/天气/真好</code>。这个步骤为流程图中的doc-&gt; feature, weight 步骤，feature就是这些词汇，而weight就是词的权重，我们可以用tf,idf或tf-idf。简单起见，直接用tf就可以了，那么上述<code>feature,weight</code>分别是<strong>[今天,2],[星期天,1],[天气,1],[真好,1]</strong></p>
+<h3 id="步骤二、将每个词哈希成n-bit整数">步骤二、将每个词哈希成n-bit整数</h3><p>选用一个哈希算法将每个词哈希成一个n-bit整数，哈希算法的选取挺关键的，经过试验<code>MurmurHash</code>比较靠谱。哈希之后的结果为流程图中的hash,weight列。</p>
+<h3 id="步骤三、每个hash,weight转化为一个向量">步骤三、每个hash,weight转化为一个向量</h3><p>转化规则为，如果bit值为0，则该位的值为-weight,如果bit值为1，则该位的值为+weight。比如<code>hash=100110</code>,<code>weight=2</code>，转化后的结果就是<code>2,-2,-2,2,2,-2</code></p>
+<h3 id="步骤四、合并上述结果">步骤四、合并上述结果</h3><p>合并就是将每个结果向量相加，得到一个向量，如流程图中的<code>add</code>步骤。</p>
+<h3 id="步骤五、信号函数">步骤五、信号函数</h3><p>接下来就是最后一步了，通过一个信号函数，将结果向量再转化为一个n-bit整数。信号函数为，如果该bit大于0,则为1，如果该bit小于0，则为0。</p>
+<h3 id="代码如下">代码如下</h3><pre><code>package com.meetyou.spamdetect;
+
+<span class="keyword">import</span> java.util.<span class="type">List</span>;
+<span class="keyword">import</span> java.util.<span class="type">ArrayList</span>;
+<span class="keyword">import</span> java.util.<span class="type">Map</span>;
+<span class="keyword">import</span> java.util.<span class="type">HashMap</span>;
+<span class="keyword">import</span> org.lionsoul.jcseg.core.<span class="type">ISegment</span>;
+
+
+public class <span class="type">SimHash</span>
+{
+    private <span class="keyword">static</span> final <span class="type">int</span> <span class="type">BITS_LENGTH</span> = <span class="number">64</span>;
+
+
+    public <span class="keyword">static</span> long make(<span class="type">String</span> resource,final <span class="type">ISegment</span> iseg) throws <span class="type">Exception</span>
+   {
+        <span class="keyword">if</span> (resource.isEmpty() || resource == null)
+        {
+            throw new <span class="type">Exception</span>(<span class="string">"Resource is null or empty!"</span>);
+        }
+        //对文本进行中文分词
+        <span class="type">List</span>&lt;<span class="type">String</span>&gt; results = <span class="type">JcsegUtil</span>.segStringWithoutStopWords(iseg, resource);
+
+        <span class="keyword">if</span> (results.size() &gt; <span class="number">0</span>)
+        {
+            //统计词频作为simhash的权值
+            <span class="type">Map</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt; wordCount = new <span class="type">HashMap</span>&lt;<span class="type">String</span>,<span class="type">Integer</span>&gt;();
+            <span class="keyword">for</span> (<span class="type">String</span> <span class="literal">result</span> : results)
+            {
+                <span class="type">Integer</span> cnt = wordCount.get(<span class="literal">result</span>);
+                <span class="keyword">if</span> (cnt == null)
+                {
+                    wordCount.put(<span class="literal">result</span>, <span class="number">1</span>);
+                }
+                <span class="keyword">else</span>
+                {
+                    wordCount.put(<span class="literal">result</span>,cnt+<span class="number">1</span>);
+                }
+            }
+
+            //根据词频权值，将所有词的hash值合并
+            <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; weights = new <span class="type">ArrayList</span>&lt;<span class="type">Integer</span>&gt;();
+            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="type">BITS_LENGTH</span>; i++)
+            {
+                weights.add(<span class="number">0</span>);
+            }
+
+            <span class="keyword">for</span> (<span class="type">Map</span>.<span class="type">Entry</span>&lt;<span class="type">String</span>, <span class="type">Integer</span>&gt; entry : wordCount.entrySet())
+            {
+                //应用<span class="type">MurmurHash</span>计算每个词的哈希结果
+                long u64 = <span class="type">MurmurHash</span>.hash64(entry.getKey());
+                <span class="type">int</span> w = entry.getValue();
+
+                long u64_1 = <span class="number">1</span>;
+                <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="type">BITS_LENGTH</span>; j++)
+                {
+                    long <span class="literal">result</span> = ((u64_1 &lt;&lt; j) &amp; u64);
+                    <span class="type">int</span> currWeight = weights.get(j);
+                    <span class="keyword">if</span> (<span class="literal">result</span> == <span class="number">0</span>)
+                        weights.<span class="type">set</span>(j, currWeight-w);
+                    <span class="keyword">else</span>
+                        weights.<span class="type">set</span>(j, currWeight+w);
+                }
+            }
+
+            //获取最终的哈希值，如果该位大于<span class="number">0</span>，则置<span class="number">1</span>，小于<span class="number">0</span>，则置<span class="number">0</span>
+            long v64 = <span class="number">0</span>;
+            long v64_1 = <span class="number">1</span>;
+            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="type">BITS_LENGTH</span>; i++)
+            {
+                <span class="type">Integer</span> weight = weights.get(i);
+                <span class="keyword">if</span> (weight &gt; <span class="number">0</span>)
+                {
+                    v64 |= (v64_1 &lt;&lt; i);
+                }
+            }
+            v64 = new <span class="type">Long</span> (v64);
+            <span class="keyword">return</span> v64;
+        }
+        <span class="keyword">else</span>
+        {
+            throw new <span class="type">Exception</span>(<span class="string">"No words find...maybe the dictionary didn't contain the words..."</span>);
+        }
+    }
+
+/**
+ * 根据两文本的<span class="type">SimHash</span>编码来判断是否相似，如果两个<span class="number">64</span>位的编码不同的位数小于等于n则认为相等
+ * @param lhs
+ * @param rhs
+ * @param n
+ * @<span class="keyword">return</span>
+ */
+    public <span class="keyword">static</span> boolean isEqual(long lhs, long rhs, <span class="type">int</span> n)
+    {
+        long <span class="literal">result</span> = lhs ^ rhs;
+        <span class="type">int</span> cnt = <span class="number">0</span>;
+        long u64 = <span class="number">1</span>;
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="type">BITS_LENGTH</span>; i++)
+        {
+            <span class="keyword">if</span> ((<span class="literal">result</span> &amp; (u64 &lt;&lt; i)) != <span class="number">0</span>)
+                cnt++;
+        }
+
+        <span class="keyword">if</span> (cnt &lt;= n)
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        <span class="keyword">else</span>
+            <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+}
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/文本判重/">文本判重</a><a href="/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="/2015/06/14/simhash/" data-title="相似性哈希算法-SimHash | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/05/09/word2vec/"  title="word2vec学习笔记(一)">
+ <strong>下一篇：</strong><br/> 
+ <span>word2vec学习笔记(一)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SimHash"><span class="toc-number">1.</span> <span class="toc-text">SimHash</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤一、中文分词"><span class="toc-number">1.0.1.</span> <span class="toc-text">步骤一、中文分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤二、将每个词哈希成n-bit整数"><span class="toc-number">1.0.2.</span> <span class="toc-text">步骤二、将每个词哈希成n-bit整数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤三、每个hash,weight转化为一个向量"><span class="toc-number">1.0.3.</span> <span class="toc-text">步骤三、每个hash,weight转化为一个向量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤四、合并上述结果"><span class="toc-number">1.0.4.</span> <span class="toc-text">步骤四、合并上述结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤五、信号函数"><span class="toc-number">1.0.5.</span> <span class="toc-text">步骤五、信号函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码如下"><span class="toc-number">1.0.6.</span> <span class="toc-text">代码如下</span></a></li></ol></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/算法/" title="算法">算法<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据挖掘/" title="数据挖掘">数据挖掘<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/无监督学习/" title="无监督学习">无监督学习<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文本判重/" title="文本判重">文本判重<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构/" title="数据结构">数据结构<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Talk is cheap,show me the code. <br/>
+			I like Python.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/THTBSE" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="https://www.zhihu.com/people/heap_Frank" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="Frank">Frank</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+  </body>
+</html>
