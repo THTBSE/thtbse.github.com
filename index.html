@@ -80,6 +80,62 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/21/kafkaStart/" title="Kafka集群搭建" itemprop="url">Kafka集群搭建</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-21T08:09:28.000Z" itemprop="datePublished"> 发表于 2015-06-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="背景介绍">背景介绍</h1><p>Kafka是一个分布式消息系统。我为什么需要用到消息系统？因为在做反垃圾系统的时候，每新增一个帖子，系统就要对它进行处理、判断，如果有异常再反馈到服务器后台，这里的帖子就是消息。一个消息系统，就是服务器后台与反垃圾系统进行消息传递的媒介。在我们的架构上，反垃圾系统被设计为异步运行的，如下图所示。<br><img src="https://raw.githubusercontent.com/THTBSE/Images/master/kafka/kafka1.png" alt=""><br>用户发布新帖，服务器后台收到消息以后，会直接通过并更新进数据库，同时发送一份让反垃圾系统处理，如果是异常帖子，反垃圾系统再反馈给服务器后台进行状态变更。<br><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/21/kafkaStart/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kafka/">Kafka</a><a href="/tags/分布式/">分布式</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/06/14/antispam0/" title="UGC社区实时内容判重系统" itemprop="url">UGC社区实时内容判重系统</a>
   </h1>
   <p class="article-author">By
@@ -579,57 +635,10 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/17/hello-world/" title="Hello Blog" itemprop="url">Hello Blog</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-17T13:57:00.585Z" itemprop="datePublished"> 发表于 2015-03-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/03/17/hello-world/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
 
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
+  <nav id="page-nav" class="clearfix">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+  </nav>
 
 </div>
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
@@ -670,7 +679,15 @@
 			
 		
 			
-				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反垃圾/" title="反垃圾">反垃圾<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kafka/" title="Kafka">Kafka<sup>1</sup></a></li>
 			
 		
 			
@@ -682,7 +699,9 @@
 			
 		
 			
-				<li><a href="/tags/反垃圾/" title="反垃圾">反垃圾<sup>1</sup></a></li>
+				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
+			
+		
 			
 		
 		</ul>
