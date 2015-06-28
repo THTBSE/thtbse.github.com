@@ -80,6 +80,62 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/27/stormAck/" title="Storm容错机制" itemprop="url">Storm容错机制</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-27T12:04:56.000Z" itemprop="datePublished"> 发表于 2015-06-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在处理实时消息流的时候用到了Storm。今天看了一篇关于Storm容错机制介绍的文章觉得挺不错，就按照自己的理解把它记录下来吧。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/27/stormAck/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Storm/">Storm</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/06/21/kafkaStart/" title="Kafka集群搭建" itemprop="url">Kafka集群搭建</a>
   </h1>
   <p class="article-author">By
@@ -582,59 +638,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/17/buildBlog/" title="搭建github博客的要点" itemprop="url">搭建github博客的要点</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-17T14:19:37.000Z" itemprop="datePublished"> 发表于 2015-03-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="github部分">github部分</h3><p>这部分比较轻松，跟着github的教程一步步走就成功了<br><a href="https://pages.github.com/" target="_blank" rel="external">教程在此</a></p>
-<h3 id="布置博客">布置博客</h3><p>之前以为github那部分完成以后，打开链接就能有基本的博客框架出现了，结果发现就只有index.html里面的那句“hello,world”！顿感眼前一黑，难道我要用自己只粗略浏览过的前端知识来完成整个博客？难以想象！还好一搜索，发现有很多搭建个人博客的简便方法。<a href="http://hexo.io/docs/asset-folders.html" target="_blank" rel="external">hexo</a>就很不错。<a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">cnfeat</a>这个教程讲的挺不错的，很详细，跟着一步步来，安装node.js,git我本来就有了，就不用安装了。之后安装hexo，对照着一步步配置。然后问题就来了—我输入hexo server这个命令，得到的结果告诉我hexo没有这个命令，搜索了也找不到原因，打开hexo的<a href="http://hexo.io/docs/commands.html" target="_blank" rel="external">commands</a>页面又有server命令，还以为是我的hexo版本太低，重装、更新都还是一样。还好在hexo文档的<a href="http://hexo.io/docs/server.html" target="_blank" rel="external">这个</a>页面发现了原因</p>
-<pre><code>&gt; Server was separated <span class="built_in">from</span> <span class="operator">the</span> main module <span class="operator">in</span> Hexo <span class="number">3.</span> You have <span class="built_in">to</span> install hexo-server <span class="keyword">before</span> start <span class="keyword">using</span>.
-</code></pre><p>原来还要安装一遍，果然，安装完以后hexo server命令就可以用了。<br><br>之后还遇到一个问题，在准备deploy的时候。出现<em>ERROR deployer not found github</em>，还是到了hexo官方文档查看，可能是版本问题，在deploy下面的type不填github，填git就好。然后再执行npm install hexo-deployer-git —save。之后再hexo deploy就大功告成啦。<br><br>现在的问题是，markdown的语法我还是渣渣，还要学学才能愉快的写blog，哈哈</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -675,15 +678,19 @@
 			
 		
 			
-				<li><a href="/tags/文本判重/" title="文本判重">文本判重<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/分布式/" title="分布式">分布式<sup>1</sup></a></li>
+				<li><a href="/tags/Storm/" title="Storm">Storm<sup>1</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/反垃圾/" title="反垃圾">反垃圾<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>1</sup></a></li>
 			
 		
 			
@@ -699,9 +706,7 @@
 			
 		
 			
-				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
-			
-		
+				<li><a href="/tags/文本判重/" title="文本判重">文本判重<sup>1</sup></a></li>
 			
 		
 		</ul>
