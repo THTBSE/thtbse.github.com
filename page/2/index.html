@@ -80,6 +80,63 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/03/18/Apriori/" title="Apriori算法" itemprop="url">Apriori算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-18T01:55:55.000Z" itemprop="datePublished"> 发表于 2015-03-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;从这篇开始，把学过的知识点，零散的笔记整理归纳起来，帮助自己巩固一下。没有一定的顺序，但每一篇都力求能够说的明白。</p>
+<h1 id="介绍">介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;Apriori算法属于是数据挖掘中用来寻找<code>频繁项集</code>与进行<code>关联分析</code>的。频繁项集与关联分析又有什么用呢？举一个常见的例子，有超市的购物清单如下。<br><br>1.牛奶，面包，水果，饼干<br>2.牛奶，花生，面包<br>3.啤酒，牛奶，花生<br>4.花生，面包，水果<br>5.啤酒，花生，水果<br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;找出频繁项集就是要找出购物清单里面经常出现的集合，集合可以由1个或多个事件组成。是否经常出现是人为定义的称为<code>支持度</code>的数据所决定的。而关联分析则是用来寻找频繁项集之间的关系。比如买了牛奶再买面包的可能性？买了啤酒再买花生的可能性如何？可能性的大小通过<code>置信度</code>来表示。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;有了这些数据，商家就可以根据顾客的消费记录来为顾客推荐商品，比如我们在淘宝上搜索了一些商品之后，它总是会为我推荐一些相似的商品，说是”查看此商品的顾客也查看了如下商品”。这就是通过频繁项集与关联分析得到的，这有的时候非常有用，因为我们并不一定知道我们想要的商品的确切名字，往往是通过系统推荐的商品才找到了自己想要的。这种例子还有豆瓣读书与豆瓣电影，打开一部电影的介绍，网页中同样有<font color="green">喜欢这部电影的人也喜欢····</font>的标题，并且推荐了一系列的电影给用户。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;除此之外，找频繁项集还可以用来发现某一类事物的共有特征。比如归类不同消费群体的消费清单，然后找出其中的频繁项集，并用频繁项集的元素来作为这一类消费群体的特征，以后就可以根据这些特征来推断消费者的身份。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;说到这里都还没提到Apriori算法，其实找频繁项集不用Apriori算法也一样可以完成，只不过效率很成问题。后面再做介绍，简而言之，该算法就是用来提升计算的效率的。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/03/18/Apriori/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/数据挖掘/">数据挖掘</a><a href="/tags/无监督学习/">无监督学习</a><a href="/tags/机器学习/">机器学习</a><a href="/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/03/17/buildBlog/" title="搭建github博客的要点" itemprop="url">搭建github博客的要点</a>
   </h1>
   <p class="article-author">By
@@ -222,11 +279,11 @@
 			
 		
 			
-				<li><a href="/tags/反垃圾/" title="反垃圾">反垃圾<sup>1</sup></a></li>
+				<li><a href="/tags/文本判重/" title="文本判重">文本判重<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
+				<li><a href="/tags/反垃圾/" title="反垃圾">反垃圾<sup>1</sup></a></li>
 			
 		
 			
@@ -242,11 +299,15 @@
 			
 		
 			
+				<li><a href="/tags/自然语言处理/" title="自然语言处理">自然语言处理<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/工程/" title="工程">工程<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/文本判重/" title="文本判重">文本判重<sup>1</sup></a></li>
+				<li><a href="/tags/有监督学习/" title="有监督学习">有监督学习<sup>1</sup></a></li>
 			
 		
 		</ul>
