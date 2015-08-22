@@ -108,23 +108,28 @@
 <h3 id="隐马尔可夫模型">隐马尔可夫模型</h3><p>根据条件概率有<code>P(y1,y2...yn| x1,x2...xn) = P(y1,y2...yn, x1,x2...xn) / P(x1,x2...xn)</code>。对于每一种标注序列，<code>P(x1,x2..xn)</code>都是一样的，因此只要求观测序列与标注序列最大的联合概率即可。</p>
 <p>又因为<code>P(y1,y2...yn, x1,x2...xn) = P(y1,y2...yn) * P(x1,x2,...xn | y1,y2...yn)</code><br>所以最终要求的是<code>argmax P(y1,y2...yn) * P(x1,x2,...xn | y1,y2...yn)</code>。</p>
 <p>计算<code>P(y1,y2...yn)</code>用到马尔可夫假设。计算<code>P(x1,x2,...xn | y1,y2...yn)</code>用到观测独立性假设。<br></p>
-<p>说这两个假设前先说一个概念，观测序列x1,x2,…xn的每个位置xi可以看成一个时刻，y1,y2…yn就是每个时刻的状态，由隐含的状态生成观测的随机序列。<br></p>
+<p>说这两个假设前先说一个概念，观测序列x1,x2,…xn的每个位置xi可以看成一个时刻，y1,y2…yn就是每个时刻的隐含状态，x1,x2,…xn就是由隐含状态生成的随机观测序列。<br></p>
 <h4 id="马尔可夫假设">马尔可夫假设</h4><p>马尔可夫假设即假设隐藏的马尔可夫链在任意时刻t的状态只依赖于前n个时刻的状态，与其他时刻的观测及状态均无关，也与时刻t无关。n=1 就是1阶马尔可夫假设，n=2就是2阶马尔可夫假设。在命名实体识别的这个问题中，我希望用trigram语言模型，因此就用2阶马尔可夫假设。具体地，对于三元组(u,v,w)，其中w=yi, v=yi-1, u=yi-2。状态w出现的概率为q(w|u,v) = c(u,v,w) / c(u,v)，其中c(u,v,w)是三元组(u,v,w)在训练集中出现的次数，c(u,v)是二元组(u,v)出现的次数。根据hmm假设，<code>P(y1,y2...yn)</code>计算如下</p>
 <p><img src="https://raw.githubusercontent.com/THTBSE/Images/master/hmm/hmm1.png" alt="hmm1"></p>
 <p>令每个句子的结尾都用STOP标记，因此在标注上增加y(n+1) = <em>STOP</em>。且y0 = y-1 = *，以便计算q(y1|y-1,y0)。所以有</p>
-<p><img src="https://raw.githubusercontent.com/THTBSE/Images/master/hmm/hmm2.png" alt="hmm2"></p>
+<p><img src="https://raw.githubusercontent.com/THTBSE/Images/master/hmm/hmm2.png" alt="hmm2"><br><br></p>
 <h4 id="观测独立性假设">观测独立性假设</h4><p>观测独立性假设指的是，任意时刻的观测只与该时刻的马尔可夫链状态有关，与其他观测及状态都无关。令给定状态s，观测为x的概率表示为e(x|s)，e(x|s) = c(s-&gt;x) / c(s)。c(s)为状态s出现的次数，c(s-&gt;x)为状态为s时，观测x出现的次数。因此<code>P(x1,x2,...xn | y1,y2...yn)</code>的计算如下</p>
 <p><img src="https://raw.githubusercontent.com/THTBSE/Images/master/hmm/hmm3.png" alt="hmm3"></p>
 <p><br></p>
-<p>有了两个假设，在已知观测序列的情况下，计算一组标注序列的公式如下<br><img src="https://raw.githubusercontent.com/THTBSE/Images/master/hmm/hmm4.png" alt="hmm4"></p>
+<p>有了两个假设，在已知观测序列的情况下，计算一组标注序列的公式如下<br><img src="https://raw.githubusercontent.com/THTBSE/Images/master/hmm/hmm4.png" alt="hmm4"><br><br></p>
 <h4 id="参数估计">参数估计</h4><p>计算公式已经有了，现在只需要知道参数q(w|u,v)与e(x|s)就可以计算所有标注序列(y1,y2…yn+1)的概率了。在有监督学习的情况下，参数用极大似然估计是很容易计算的。前面也有提到过</p>
 <ol>
 <li><code>q(w|u,v) = c(u,v,w) / c(u,v)</code></li>
 <li><code>e(x|s) = c(s-&gt;x) / c(s)</code></li>
 </ol>
-<p>直接统计标注好的训练集里的c(u,v,w), c(u,v), c(s-&gt;x), c(s)即可。<br><br>不过有些情况需要处理，比如三元组(u,v,w)没有在训练集出现过，那在预测的时候q(w|u,v)就等于0了，这将会导致整个概率计算为0。还有若二元组(u,v)在训练集没有出现过，那计算q(w|u,v)将是未定义的。所以估计参数q(w|u,v)的时候可以用上线性插值的方法，比如<code>q(w|u,v) = lambda1 * q(w|u,v) + lambda2 * q(w|v) * lambda3 * q(w)</code>，或者Good-Turing平滑等方法。这里暂不详细说明。<br></p>
-<p>此外，对于c(s-&gt;x)也有可能为0，因为预测时的观测x可能在训练集并没有出现。处理方法是将训练集中出现次数较少的观测映射为一些预定义的伪观测，如含有数字的映射为<em>Numeric</em>，都是大写字母的映射为<em>All_Capitals</em>，首字母大写的映射为<em>First_Capital</em>，其余映射为<em>Rare</em>等等。对于预测集中，未见过的观测x也如此映射，这就可以给e(x|s)分配一个概率。映射的方法根据具体的问题来设计。</p>
-<h4 id="预测">预测</h4><p>未完待续</p>
+<p>直接统计标注好的训练集里的c(u,v,w), c(u,v), c(s-&gt;x), c(s)即可。<br><br>不过有些情况需要处理，比如三元组(u,v,w)没有在训练集出现过，那在预测的时候q(w|u,v)就等于0了，这将会导致整个概率计算为0。还有若二元组(u,v)在训练集没有出现过，那计算q(w|u,v)将是未定义的。所以估计参数q(w|u,v)的时候可以用线性插值的方法，比如<code>q(w|u,v) = lambda1 * q(w|u,v) + lambda2 * q(w|v) * lambda3 * q(w)</code>，或者Good-Turing平滑等方法。这里暂不详细说明。<br></p>
+<p>此外，对于c(s-&gt;x)也有可能为0，因为预测时的观测x可能在训练集并没有出现。处理方法是将训练集中出现次数较少的观测映射为一些预定义的伪观测，如含有数字的映射为<em>Numeric</em>，都是大写字母的映射为<em>All_Capitals</em>，首字母大写的映射为<em>First_Capital</em>，其余映射为<em>Rare</em>等等。对于预测集中，未见过的观测x也如此映射，这就可以给e(x|s)分配一个概率。映射的方法根据具体的问题来设计。<br><br></p>
+<h4 id="预测">预测</h4><p>训练好模型之后，给一个新的句子(x1,x2,…xn)，我们希望预测出每一个词的标注(y1,y2,…xn)。最直观的方法，只要穷举出所有可能的标注序列并计算概率，最大的那个就是预测的序列了。那一共会有多少种可能的标注序列呢？当前的例子，标注有2种，句子长度为n，那可能的标注序列有2^n种。如果标注一共有m种，m &gt;&gt; 2，那么要穷举的序列就有m^n，计算量是特别大的。所以需要找出一个更巧妙的办法计算状态序列的概率。这个算法就是Viterbi算法。<br></p>
+<p><strong>Viterbi算法</strong>是用动态规划的思想求解隐马尔可夫模型的预测问题，也就是用动态规划求解概率最大的状态序列。假设π(k,v,w)是时刻为k，以v,w结尾（v=yk-1,w=yk)的状态序列(y1,y2…yk)的最大概率，因此(y1,y2…yk)也就是到时刻K状态为w的最佳状态序列。那么前一时刻的的状态序列(y1,y2…yk-1)也必然是最佳状态序列，如果不是就可以找出一条更好的状态序列(y1’,y2’…yk-1’)，并与当前状态结合成一条更优状态序列，这与已知相矛盾。因此，时刻k-1的状态序列最大概率为π(k-1,u,v)，根据马尔可夫假设与观测独立性假设，可以得出一个递归定义公式。<br></p>
+<p><strong>π(k,v,w) = π(k-1,u,v) * q(w|u,v) * e(x|w)</strong> ，这里假设u,v,w都是常量 <br></p>
+<p>根据这个公式，在时刻k，计算状态为w的最大概率，只需要找出前一时刻<strong>各种状态</strong>下的最大概率，再乘以条件概率，取最大的就是该时刻状态为w的最大概率。公式表示为<br></p>
+<p><strong>π(k,v,w) = max( π(k-1,u,v) * q(w|u,v) * e(x|w) )</strong> ，这里假设(u,v)是变量，代表时刻k-1最大概率状态序列的末位二元组。 <br></p>
+<p>定义是递归的，实际计算的时候用迭代的方法。首先定义π(0,*,*)=1。对时刻k=1…n，每个时刻的状态s∈(s1,s2..sm)，假设一共m种状态，计算出π(k,v,s)，因为计算是迭代的，所以只需保存前一个时刻的π(k-1,u,v)即可。并记录该时刻该状态下的前一时刻最佳状态bp(k,v,s)，这个要保存所有时刻不同状态的前一时刻状态。迭代计算完毕之后，根据最后时刻的最佳状态，从bp数组逐步找出最佳状态序列即可完成预测。<br><br></p>
 <h4 id="代码与例子">代码与例子</h4><p><a href="https://github.com/THTBSE/NLP/tree/master/hmm" target="_blank" rel="external">数据集</a><br>.gene.train为标注好的训练集<br>.gene.key为有标注的测试集<br>.gene.dev为未标注的测试集<br><a href="https://github.com/THTBSE/NLP/blob/master/hmm/hmm.py" target="_blank" rel="external">Python代码</a><br>代码包括训练的过程，与预测的Viterbi算法。<br>执行<code>&gt; python hmm.py gene.train gene.dev</code> 即可完成训练与预测，预测结果输出为gene.dev1，将预测结果与gene.key进行比较就可以计算recall,precision,F1了。</p>
 <h4 id="参考文献">参考文献</h4><p>参考<strong>Michael Collins</strong>的notes，链接如下<a href="http://www.cs.columbia.edu/~mcollins/hmms-spring2013.pdf" target="_blank" rel="external">trigram hidden Markov model</a></p>
   
