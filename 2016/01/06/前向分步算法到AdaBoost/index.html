@@ -4,25 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>文本分类初探 | Frank&#39;s Home</title>
+    <title>前向分步算法到AdaBoost | Frank&#39;s Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Frank">
     
 
     
-    <meta name="description" content="简介文本分类的最终目的就是将输入的文本分到预定义的类别当中。最简单的文本分类方法就是根据一系列给定的关键词，包含哪些关键词就分到哪一类。这种方法简单粗暴，但是很容易误分类。所以目前都是用基于机器学习的方法对文本进行分类。应用比较广泛的算法就是朴素贝叶斯啦。下面假设文本分类的应用场景是需要将一个中文社区内的帖子分为包含商业信息与不包含商业信息。
-主要的分类步骤1.将社区内的帖子进行分词，并且滤掉停用">
+    <meta name="description" content="前向分步算法到AdaBoost前向分步算法与AdaBoost有什么关系呢？除了都属于Boosting的模型，其实AdaBoost是当前向分步算法损失函数为指数损失时的特例。这篇就写一下推导的过程。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="文本分类初探">
-<meta property="og:url" content="/2015/04/25/docClassify/index.html">
+<meta property="og:title" content="前向分步算法到AdaBoost">
+<meta property="og:url" content="/2016/01/06/前向分步算法到AdaBoost/index.html">
 <meta property="og:site_name" content="Frank's Home">
-<meta property="og:description" content="简介文本分类的最终目的就是将输入的文本分到预定义的类别当中。最简单的文本分类方法就是根据一系列给定的关键词，包含哪些关键词就分到哪一类。这种方法简单粗暴，但是很容易误分类。所以目前都是用基于机器学习的方法对文本进行分类。应用比较广泛的算法就是朴素贝叶斯啦。下面假设文本分类的应用场景是需要将一个中文社区内的帖子分为包含商业信息与不包含商业信息。
-主要的分类步骤1.将社区内的帖子进行分词，并且滤掉停用">
+<meta property="og:description" content="前向分步算法到AdaBoost前向分步算法与AdaBoost有什么关系呢？除了都属于Boosting的模型，其实AdaBoost是当前向分步算法损失函数为指数损失时的特例。这篇就写一下推导的过程。">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="文本分类初探">
-<meta name="twitter:description" content="简介文本分类的最终目的就是将输入的文本分到预定义的类别当中。最简单的文本分类方法就是根据一系列给定的关键词，包含哪些关键词就分到哪一类。这种方法简单粗暴，但是很容易误分类。所以目前都是用基于机器学习的方法对文本进行分类。应用比较广泛的算法就是朴素贝叶斯啦。下面假设文本分类的应用场景是需要将一个中文社区内的帖子分为包含商业信息与不包含商业信息。
-主要的分类步骤1.将社区内的帖子进行分词，并且滤掉停用">
+<meta name="twitter:title" content="前向分步算法到AdaBoost">
+<meta name="twitter:description" content="前向分步算法到AdaBoost前向分步算法与AdaBoost有什么关系呢？除了都属于Boosting的模型，其实AdaBoost是当前向分步算法损失函数为指数损失时的特例。这篇就写一下推导的过程。">
 
     
     <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
@@ -81,14 +78,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/04/25/docClassify/" title="文本分类初探" itemprop="url">文本分类初探</a>
+      <a href="/2016/01/06/前向分步算法到AdaBoost/" title="前向分步算法到AdaBoost" itemprop="url">前向分步算法到AdaBoost</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-25T09:18:23.000Z" itemprop="datePublished"> 发表于 2015-04-25</time>
+    <time datetime="2016-01-06T13:32:10.000Z" itemprop="datePublished"> 发表于 2016-01-06</time>
     
   </p>
 </header>
@@ -97,20 +94,43 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文本向量空间"><span class="toc-number">2.</span> <span class="toc-text">文本向量空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#训练与分类测试"><span class="toc-number">3.</span> <span class="toc-text">训练与分类测试</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前向分步算法到AdaBoost"><span class="toc-number">1.</span> <span class="toc-text">前向分步算法到AdaBoost</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#前向分步算法_Forward_Stagewise_Additive_Modeling"><span class="toc-number">1.0.1.</span> <span class="toc-text">前向分步算法 Forward Stagewise Additive Modeling</span></a></li></ol></li></ol></li></ol>
 		
 		</div>
 		
-		<h1 id="简介">简介</h1><p>文本分类的最终目的就是将输入的文本分到预定义的类别当中。最简单的文本分类方法就是根据一系列给定的关键词，包含哪些关键词就分到哪一类。这种方法简单粗暴，但是很容易误分类。所以目前都是用基于机器学习的方法对文本进行分类。应用比较广泛的算法就是朴素贝叶斯啦。<br><br>下面假设文本分类的应用场景是需要将一个<code>中文</code>社区内的帖子分为包含商业信息与不包含商业信息。</p>
-<p>主要的分类步骤<br>1.将社区内的帖子进行分词，并且滤掉停用词。每一篇帖子都转化为一个词集。<br>2.将文本集转化为向量集。<br>3.用机器学习算法学习给定的文本集，得到分类器。<br>4.用分类器进行分类</p>
-<p>这篇着重讲文本向量空间的构建，因此中文分词的步骤跳过不讲。<br><a id="more"></a></p>
-<h1 id="文本向量空间">文本向量空间</h1><p>要用机器学习的方法，当然得先把文本转换为向量。要将一个文本转换为向量，首先得确定这个向量的维度。这个维度也就是用于分类文本的特征词的数量。<strong>怎么确定这个维度以及选取更有益于分类的特征词是整个分类过程的重点，这个步骤去需要不断的尝试与改进。</strong><br></p>
-<p>首先是特征词的选取，哪些词可以明显的区分不同的文本呢？比如要区分商业帖子与非商业帖子，“牌子”、“推荐”、“款式”以及具体的商品名称，这些包含比较明显的商业信息，“情感”、“星座”、“爱情”这些就比较感性，没有商业信息。依靠我们自己的先验知识，是可以列出一个单词清单，但是一个人的认知总是有限的，并且具体到社区里，情况可能还有不同，比如我们认为“淘宝”肯定列入特征词，但是这个社区里面可能偏偏没有人谈论淘宝。所以我们还需要数据，从已有的社区帖子中，挖掘出我们需要的特征词信息。<br></p>
-<p>要从大量的文本中提取出特征词，我们需要一个指标来衡量，每一个词能否作为特征词。现在我选取的是<code>TF-IDF</code>来判断。TF-IDF的值越高，这个词作为特征词的效果就越好。<br>1.TF(term frequency)也就是词频，<code>Count(w|Ck) / Count(w&#39;|Ck)</code>。Count(w|Ck)是词w在Ck类文本中出现的次数，Count(w’|Ck)表示Ck类文档中的总词数。<br>2.IDF(inverse document frequency)叫做逆文档词频，<code>log(N/nw)</code>，N是文档的总数，nw是包含词w的文档数。要注意的是，这个N是所有文档的总数，不是某一类的，nw也是所有文档中，包含词w的文档数。IDF是&gt;=1的，IDF越小，说明这个单词区分不同类文档的能力越弱，极端的情况下IDF=1，说明所有类的每一篇文档都包含这个词，那么用这个词来区分不同类的文本就毫无意义了。<br>3.<code>TF-IDF = TF * IDF</code></p>
-<p>从预先标注好的商业贴，与非商业贴中算出每个词的TF-IDF，再按照降序排序。从两个类别的词集中选出TF-IDF大于某个阈值的词来做特征词。但是实际操作中会发现，有些词在两个词集中的TF-IDF都很高，比如“什么”，这种算是之前停用词没有过滤好，所以不能直接机器选取，还需要人工过滤一下。<br></p>
-<p>确定了特征词集，则文本向量的维度也就定下来了。假设特征词为W=(K1,K2,K3,…,KN)，文本就转换为x=(Q1,Q2,Q3,…,QN)。这里的Q用得是相应的词在该文本中的词频。比如文本中存在词K1，则<code>Q1=Count(K1 in doc) / Count(doc)</code>。Count(doc)为该文本中词的数量；如果K2没有出现在文本中，则<code>Q2=0</code>。<strong>这样得到的向量是很稀疏的，也许会有点问题，不过目前还没发现</strong>。<br></p>
-<p>还有一个问题是，是否需要对这个文本向量进行归一化，目前的测试结果看来是不需要，不过由于训练集与测试集都还太小（训练集2200，测试集1100），下定论还为时尚早，等训练集与测试集都更大了再做决定。</p>
-<h1 id="训练与分类测试">训练与分类测试</h1><p>文本集的向量空间构建完成以后，就可以用常规的机器学习算法进行学习与分类了。我用的是朴素贝叶斯。目前对1100个测试例子的错误率为8.8%，还有待提高，提高的方法为，扩大训练集以及筛选更合理的特征词。</p>
+		<h1 id="前向分步算法到AdaBoost">前向分步算法到AdaBoost</h1><p>前向分步算法与AdaBoost有什么关系呢？除了都属于Boosting的模型，其实AdaBoost是当前向分步算法损失函数为指数损失时的特例。这篇就写一下推导的过程。</p>
+<a id="more"></a>
+<h3 id="前向分步算法_Forward_Stagewise_Additive_Modeling">前向分步算法 Forward Stagewise Additive Modeling</h3><hr>
+<ol>
+<li>初始化$f_0(x) = 0$</li>
+<li>对于$m = 1,2,…,M$<br>(a) </li>
+</ol>
+<p>$$<br>(\beta_m,\gamma_m) = \arg\min_{\beta,\gamma} \sum_{i=1}^N L(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma))<br>$$</p>
+<p>(b) </p>
+<p>$$<br>f_m(x) = f_{m-1}(x) + \beta_m b(x;\gamma_m)<br>$$</p>
+<hr>
+<p>前向分步算法的步骤如上，其实我觉得应该翻译成<strong>前向分步累加模型</strong>更适合。因为最终的决策函数$f(x)$是由一系列的基函数$b(x;\gamma_m)$与相应的权值$\beta_m$<strong>累加</strong>起来的。前向分步指的是，最小化损失函数获取第$m$步的$\beta b(x;\gamma)$时不影响之前已经获取的参数$\gamma$与系数$\beta$。</p>
+<p>对于回归问题，前向分步算法的损失函数可以选平方损失，即<br>$$<br>L(y_i,f(x)) = (y_i - f(x))^2<br>$$</p>
+<p>所以有</p>
+<p>$$<br>L(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma)) = (y_i - f_{m-1}(x_i) - \beta b(x_i;\gamma))^2 \ = (r_{im} - \beta b(x_i;\gamma))^2<br>$$</p>
+<p>其中$r_{im}= (y_i - f_{m-1}(x_i))$，这可以理解成是当前模型的残差，为了获取 $\beta_m b(x;\gamma_m)$，也就是令其去拟合当前模型的残差。</p>
+<p><br></p>
+<p>而AdaBoost是个分类器，对于分类问题，平方损失就不太适合了。所以引入指数损失，即<br>$$<br>L(y,f(x)) = exp(-y f(x))<br>$$</p>
+<p>基本的AdaBoost是一个二分类模型，令其基函数$b(x;\gamma)=G(x)$，所以有$G_m(x) \in \lbrace-1,1\rbrace$。<br>则在指数损失的基础上，就需要解决如下问题</p>
+<p>$$<br>(\beta_m,G_m) = \arg\min_{\beta,G} \sum_{i=1}^N exp[-y_i(f_{m-1}(x_i)+\beta G_(x_i))]<br>$$</p>
+<p>令$w_i^{(m)} = exp(-y_i f_{m-1}(x_i))$，则上述公式可以写成</p>
+<p>$$<br>(\beta_m,G_m) = \arg\min_{\beta,G} \sum_{i=1}^N w_i^{(m)} exp(-\beta y_i G(x_i))<br>$$</p>
+<p>因为$y_i \in \lbrace-1,1\rbrace$，且$y_i$要么等于$G(x_i)$，要么不等于。所以将上述公式拆成两部分。暂时省略$\arg\min$之前的部分，$exp$简写成$e$，有<br>$$<br>e^{-\beta} \sum_{y_i=G(x_i)} w_i^{(m)} + e^{\beta} \sum_{y_i \ne G(x_i)} w_i^{(m)}<br>$$</p>
+<p>在这基础上再添上两项，有<br>$$<br>e^{-\beta} \sum_{y_i=G(x_i)} w_i^{(m)} + e^{\beta} \sum_{y_i \ne G(x_i)} w_i^{(m)} + e^{-\beta} \sum_{y_i \ne G(x_i)} w_i^{(m)} - e^{-\beta} \sum_{y_i \ne G(x_i)} w_i^{(m)}<br>$$</p>
+<p>再进一步合并，得到<br>$$<br>(e^{\beta} - e^{-\beta}) \sum_{i=1}^N w_i I(y_i \ne G(x_i)) + e^{-\beta} \sum_{i=1}^N w_i^{(m)}     \tag 1<br>$$</p>
+<p>对于迭代的第$m$步，假设$\beta$为常数，那么公式的右边以及$(e^{\beta}-e^{-\beta})$都可以看成常数，则要让损失函数取得最小值，只需要让$\sum_{i=1}^N w_i I(y_i \ne G(x_i))$取最小值。因此有<br>$$<br>G_m = \arg\min_G \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))<br>$$</p>
+<p>那么$\beta_m$怎么求得呢？现在假设$G_m$已知的情况下，回到公式$(1)$。此时的变量为$\beta$，要让损失函数取得最小值，先对$\beta$求偏导，得到</p>
+<p>$$<br>\frac {\partial_L} {\partial_{\beta}} = e^{\beta} \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i)) + e^{-\beta} \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i)) - e^{-\beta} \sum_{i=1}^N w_i^{(m)}<br>$$<br>再令$\frac {\partial_L} {\partial_{\beta}} = 0$，得<br>$$<br>e^{\beta} \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i)) = [\sum_{i=1}^N w_i^{(m)} - \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))] e^{-\beta}<br>$$<br>对两边同求$log$，得到<br>$$<br>log \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i)) + log e^{\beta} = log  [\sum_{i=1}^N w_i^{(m)} - \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))] + log e^{-\beta}<br>$$<br>又因为$log e^{-\beta} = -log e^{\beta}$，所以有<br>$$<br>log e^{\beta} = \frac {1} {2} log \frac {\sum_{i=1}^N w_i^{(m)} - \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))} {\sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))}<br>$$<br>所以解得<br>$$<br>\beta_m = \frac {1} {2} log \frac {\sum_{i=1}^N w_i^{(m)} - \sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))} {\sum_{i=1}^N w_i I(y_i \ne G(x_i))}<br>$$<br>又因为加权误差率<br>$$<br>err_m = \frac {\sum_{i=1}^N w_i^{(m)} I(y_i \ne G(x_i))} {\sum_{i=1}^N w_i^{(m)}}<br>$$<br>所以$\beta_m$可以写成<br>$$<br>\beta_m = \frac {1} {2} log \frac {1 - err_m} {err_m}<br>$$</p>
+<p>求出了$G_m(x)$与$\beta_m$，就可以写出$f(x)$的更新公式了<br>$$<br>f_m(x) = f_{m-1}(x) + \beta_m G_m(x)<br>$$</p>
+<p>根据$w_i^{(m)} = exp(-y_i f_{m-1}(x_i))$，可以写出$w$的更新公式<br>$$<br>w_i^{(m+1)} = exp(-y_i f_m (x_i)) \ = exp(-y_i (f_{m-1}(x_i)+\beta_m G_m(x_i))) \ = w_i^{(m)} exp(- \beta_m y_i G_m(x_i))<br>$$<br>因为$y_i$等于$G_m(x_i)$的时候等于1，而不等于的时候等于-1，所以再用一个技巧，令$-y_i G_m(x_i) = 2 I(y_i \ne G_m(x_i)) - 1$，代入上面的公式，得到</p>
+<p>$$<br>w_i^{(m+1)} = exp(-y_i f_m (x_i)) = w_i^{(m)} \bullet exp^{2 \beta_m I(y_i \ne G_m(x_i))} \bullet exp^{-\beta_m}<br>$$</p>
+<p>再令$\alpha_m = 2\beta_m$，且上式的最右系数$exp^{-\beta_m}$对所有$w_i$都一样，所以可以舍去。这样就得到了<br>$$<br>w_i^{(m+1)} = w_i^{(m)} \bullet exp^{\alpha_m I(y_i \ne G_m(x_i))}<br>$$<br>这就与AdaBoost的样本权值更新公式一样了。<br>而$\alpha_m = 2\beta_m = log \frac {1 - err_m} {err_m}$ 也与AdaBoost的弱分类器系数一样。</p>
+<p>到这里也就推导出了当前向分步算法的损失函数选为指数损失的时候，前向分步算法也就是AdaBoost啦。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -119,7 +139,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/数据挖掘/">数据挖掘</a><a href="/tags/机器学习/">机器学习</a>
+  <span></span> <a href="/tags/机器学习/">机器学习</a>
   </div>
 
 </div>
@@ -128,7 +148,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="/2015/04/25/docClassify/" data-title="文本分类初探 | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  <div data-url="/2016/01/06/前向分步算法到AdaBoost/" data-title="前向分步算法到AdaBoost | Frank&#39;s Home" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -141,19 +161,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/09/huffman/" title="哈夫曼树与哈夫曼编码">
-  <strong>上一篇：</strong><br/>
-  <span>
-  哈夫曼树与哈夫曼编码</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/03/28/naiveBayes/"  title="朴素贝叶斯">
+<a href="/2015/08/19/hmm/"  title="隐马尔可夫模型与命名实体识别">
  <strong>下一篇：</strong><br/> 
- <span>朴素贝叶斯
+ <span>隐马尔可夫模型与命名实体识别
 </span>
 </a>
 </div>
@@ -168,7 +180,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文本向量空间"><span class="toc-number">2.</span> <span class="toc-text">文本向量空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#训练与分类测试"><span class="toc-number">3.</span> <span class="toc-text">训练与分类测试</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前向分步算法到AdaBoost"><span class="toc-number">1.</span> <span class="toc-text">前向分步算法到AdaBoost</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#前向分步算法_Forward_Stagewise_Additive_Modeling"><span class="toc-number">1.0.1.</span> <span class="toc-text">前向分步算法 Forward Stagewise Additive Modeling</span></a></li></ol></li></ol></li></ol>
  
   </div>
 

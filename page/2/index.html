@@ -80,6 +80,63 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/03/22/FPGrowth/" title="FP-Growth算法" itemprop="url">FP-Growth算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-22T01:15:13.000Z" itemprop="datePublished"> 发表于 2015-03-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="介绍">介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;FP-Growth算法也是用于寻找数据集的频繁项集，基于Apriori构建。那已经有了Apriori算法，为什么还需要FP-Growth算法呢？因为效率。在应用Apriori算法的时候，对每一个项集，都需要扫描一遍总数据集，才能判断该项集是否满足最小支持度，当总数据集特别大的时候，Apriori算法的效率是很低的。而FP-Growth算法则不同，它只要扫描两次数据集，然后构建出FP树，再对FP树进行挖掘即可。可以简单的理解为，把数据集的数据信息都压缩到FP树这个结构当中。这篇文章主要分以下几个点。</p>
+<p><strong>1.FP树的构建</strong><br><strong>2.获取条件模式基</strong><br><strong>3.构建FP条件树并获取频繁项集</strong><br><strong>4.FPGrowth应用实例</strong><br><strong>5.完整代码</strong></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/03/22/FPGrowth/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/数据挖掘/">数据挖掘</a><a href="/tags/无监督学习/">无监督学习</a><a href="/tags/机器学习/">机器学习</a><a href="/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/03/18/Apriori/" title="Apriori算法" itemprop="url">Apriori算法</a>
   </h1>
   <p class="article-author">By
@@ -255,7 +312,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>5</sup></a></li>
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>6</sup></a></li>
 			
 		
 			
@@ -366,7 +423,7 @@
 		
 		
 	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
 		
 		<a href="/about" target="_blank" title="Frank">Frank</a>
 		
@@ -432,6 +489,23 @@ $(document).ready(function(){
 
 
 
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+        tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+        TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+        messageStyle: "none"
+    }); 
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 
 <!-- Analytics Begin -->
 
