@@ -4,22 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hello Blog | Frank&#39;s Home</title>
+    <title>EM算法 | Frank&#39;s Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Frank">
     
 
     
-    <meta name="description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+    <meta name="description" content="简介EM算法也就是期望最大化算法，主要用来解决含有隐变量的参数估计问题。本文令$X$表示已观测变量数据集，$Z$表示隐含标量数据集。对不含隐变量的参数估计问题，如最大化$LL(\theta) = log P(X;\theta)$，只需要令$P(X;\theta)$对参数$\theta$求偏导。而对于含有隐含变量的，如$P(X,Z;\theta)$并没有办法得到隐含变量的具体值，所以直接求解的方式就">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello Blog">
-<meta property="og:url" content="/2015/03/17/hello-world/index.html">
+<meta property="og:title" content="EM算法">
+<meta property="og:url" content="/2016/03/09/em/index.html">
 <meta property="og:site_name" content="Frank's Home">
-<meta property="og:description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+<meta property="og:description" content="简介EM算法也就是期望最大化算法，主要用来解决含有隐变量的参数估计问题。本文令$X$表示已观测变量数据集，$Z$表示隐含标量数据集。对不含隐变量的参数估计问题，如最大化$LL(\theta) = log P(X;\theta)$，只需要令$P(X;\theta)$对参数$\theta$求偏导。而对于含有隐含变量的，如$P(X,Z;\theta)$并没有办法得到隐含变量的具体值，所以直接求解的方式就">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello Blog">
-<meta name="twitter:description" content="终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。">
+<meta name="twitter:title" content="EM算法">
+<meta name="twitter:description" content="简介EM算法也就是期望最大化算法，主要用来解决含有隐变量的参数估计问题。本文令$X$表示已观测变量数据集，$Z$表示隐含标量数据集。对不含隐变量的参数估计问题，如最大化$LL(\theta) = log P(X;\theta)$，只需要令$P(X;\theta)$对参数$\theta$求偏导。而对于含有隐含变量的，如$P(X,Z;\theta)$并没有办法得到隐含变量的具体值，所以直接求解的方式就">
 
     
     <link rel="alternative" href="/atom.xml" title="Frank&#39;s Home" type="application/atom+xml">
@@ -78,14 +78,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/03/17/hello-world/" title="Hello Blog" itemprop="url">Hello Blog</a>
+      <a href="/2016/03/09/em/" title="EM算法" itemprop="url">EM算法</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Frank" target="_blank" itemprop="author">Frank</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-17T13:57:00.585Z" itemprop="datePublished"> 发表于 2015-03-17</time>
+    <time datetime="2016-03-09T08:53:33.000Z" itemprop="datePublished"> 发表于 2016-03-09</time>
     
   </p>
 </header>
@@ -94,17 +94,43 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思想与算法步骤"><span class="toc-number">2.</span> <span class="toc-text">思想与算法步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Jensen不等式"><span class="toc-number">3.0.1.</span> <span class="toc-text">Jensen不等式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">4.</span> <span class="toc-text">小结</span></a></li></ol>
 		
 		</div>
 		
-		<p>终于搭建好博客了，很清爽干净，看着就有心情写东西，明天逐步把笔记整理上来。</p>
+		<h2 id="简介">简介</h2><p>EM算法也就是期望最大化算法，主要用来解决含有隐变量的参数估计问题。本文令$X$表示已观测变量数据集，$Z$表示隐含标量数据集。对不含隐变量的参数估计问题，如最大化$LL(\theta) = log P(X;\theta)$，只需要令$P(X;\theta)$对参数$\theta$求偏导。而对于含有隐含变量的，如$P(X,Z;\theta)$并没有办法得到隐含变量的具体值，所以直接求解的方式就行不通了，EM算法就是用于解决此类问题的。</p>
 <a id="more"></a>
+<h2 id="思想与算法步骤">思想与算法步骤</h2><p>先从最基本的说起，在已观测样本集$X$的基础上，使用极大释然估计。写出$log$释然函数如下<br>$$<br>LL(\theta | X) =  log P(X;\theta) = log \sum_Z P(X,Z;\theta)<br>$$</p>
+<p>公式最右边是已观测数据的边际释然，如果可以得到隐含变量$Z$，则可以直接写出释然函数$LL(\theta | X,Z) = log P(X,Z;\theta)$，但是我们无法得到隐含变量$Z$，这个时候就需要EM算法了，EM算法如何用于求$LL(\theta|X,Z)$的最大化呢？</p>
+<p>先介绍一下<strong>基本思想</strong>，如果有办法求出释然函数$LL(\theta)$的一个下界函数，假设叫$G(\theta)$吧，使得对所有参数$\theta$都有$LL(\theta) \ge G(\theta)$。而$G(\theta)$中又不包含隐变量$Z$，那么我们就可以用迭代的办法，先用$\theta_t$得到$G(\theta)$，然后最大化$G(\theta)$得到参数$\theta_{t+1}$，再令$\theta_t = \theta_{t+1}$，一直到收敛，就近似的求出了$LL(\theta)$的最大化了。这就是EM算法的基本思想。</p>
+<p>回到具体的参数估计问题，EM算法分为两个步骤，<strong>E</strong>步(Expectation)求期望，<strong>M</strong>步(Maximization)最大化。<strong>E</strong>步的期望，就是给定$\theta_t$时对数释然函数$LL(\theta|X,Z)$的下界函数。这个期望是对数似然函数$LL(\theta|X,Z)$关于隐变量$Z$的期望，因为我们无法求出$Z$的具体值，但是可以得到它在参数$\theta_t$时的概率分布$P(Z|X;\theta_t)$，因此期望可以写为</p>
+<p>$$<br>E_{Z|X;\theta_t} [LL(\theta|X,Z)] = E_{Z|X;\theta_t} [log P(X,Z;\theta)]  \ = \sum_Z P(Z|X;\theta_t) log P(X,Z;\theta)     \tag 1<br>$$</p>
+<p>算法的步骤如下</p>
+<ul>
+<li>首先随机初始化参数$\theta = \theta_0$</li>
+<li>迭代直至收敛 {<br><strong>E</strong>步：<br>根据$\theta_t$计算$P(Z|X;\theta_t)$，求期望<br>$$<br>E_{Z|X;\theta_t} [LL(\theta|X,Z)] = E_{Z|X;\theta} [log P(X,Z;\theta)]  \ = \sum_Z P(Z|X;\theta_t) log P(X,Z;\theta)<br>$$<br><strong>M</strong>步：<br>E步之后会得到一个只包含$\theta$的函数，M步就是最大化这个函数，得到新的参数$\theta$</li>
+</ul>
+<p>$$<br>\theta_{t+1} = \arg\max_{\theta} E_{Z|X;\theta_t} [log P(X,Z;\theta)]<br>$$<br>}</p>
+<h2 id="原理">原理</h2><p>在上一部分已经介绍了EM算法的思想与步骤，但是还有一点没有说明白，那就是为什么对数似然函数$LL(\theta|X,Z)$关于$Z$的期望会是它自己的一个下界函数呢？首先引入Jensen不等式。</p>
+<h4 id="Jensen不等式">Jensen不等式</h4><p>Jensen不等式对于凸函数$f$有<br>$$<br>E(f(X)) \ge f(E(X))<br>$$<br>也就是随机变量$X$函数值的期望大于等于随机变量期望的函数值。对于凹函数则相反。</p>
+<p>在知道了Jensen不等式后，从最基本的情况进行推导<br>$$<br>LL(\theta | X) =  log P(X;\theta) = log \sum_Z P(X,Z;\theta)<br>$$</p>
+<p>对上式的最优边用一个数学trick，同时乘和除得到隐变量$Z$在参数$\theta_t$下的概率分布，得到<br>$$<br>LL(\theta | X) =  log \sum_Z P(X,Z;\theta) = log \sum_Z P(Z|X;\theta_t) \frac {P(X,Z;\theta)} {P(Z|X;\theta_t)}<br>$$</p>
+<p>这样就得到了期望$E_Z$，有<br>$$<br>log E_Z [\frac {P(X,Z;\theta)} {P(Z|X;\theta_t)}]<br>$$<br>又因为log函数是凹函数，所以利用Jensen不等式可以得到<strong>随机变量期望的函数值大于等于函数值的期望</strong>，也就是<br>$$<br>log E_Z [\frac {P(X,Z;\theta)} {P(Z|X;\theta_t)}] \ge E_Z [log \frac {P(X,Z;\theta)} {P(Z|X;\theta_t)}]<br>$$</p>
+<p>这样也就找到了$LL(\theta|X)$的下界函数。再把它展开得到</p>
+<p>$$<br> E_Z [log \frac {P(X,Z;\theta)} {P(Z|X;\theta_t)}] = \sum_Z P(Z|X;\theta_t) log \frac {P(X,Z;\theta)} {P(Z|X;\theta_t)} \ = \sum_Z P(Z|X;\theta_t) [log P(X,Z;\theta) - log P(Z|X;\theta_t)]<br>$$</p>
+<p>又因为$P(Z|X;\theta_t)$与参数$\theta$无关，在最大化的时候不会影响结果，因此舍去。那么就可以得到<br>$$<br>\sum_z P(Z|X;\theta_t) log P(X,Z;\theta)<br>$$</p>
+<p>也就是EM算法中E步的期望$E_{Z|X;\theta_t} [LL(\theta|X,Z)]$了(参见公式1)。</p>
+<h2 id="小结">小结</h2><p>EM算法和其他一些可以直接编程，然后给定input就可以得到output的算法不太一样，它本身更可以理解为一种方法或者思想。因为$P(Z|X;\theta_t)$与$log P(X,Z;\theta)$都只是理论推导过程中的公式，具体的可计算公式还要根据具体的应用来给定，比如pLSA(probability latent semantic analysis)中参数的求解就需要用到EM算法，在这个情形下就可以编程实现来验证EM算法的效果了。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a>
+  </div>
 
 </div>
 
@@ -112,7 +138,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="/2015/03/17/hello-world/" data-title="Hello Blog | Frank&#39;s Home" data-tsina="null" class="share clearfix">
+	  <div data-url="/2016/03/09/em/" data-title="EM算法 | Frank&#39;s Home" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -125,14 +151,14 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/17/buildBlog/" title="搭建github博客的要点">
-  <strong>上一篇：</strong><br/>
-  <span>
-  搭建github博客的要点</span>
+
+<div class="next">
+<a href="/2016/01/06/前向分步算法到AdaBoost/"  title="前向分步算法到AdaBoost">
+ <strong>下一篇：</strong><br/> 
+ <span>前向分步算法到AdaBoost
+</span>
 </a>
 </div>
-
 
 </nav>
 
@@ -144,7 +170,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思想与算法步骤"><span class="toc-number">2.</span> <span class="toc-text">思想与算法步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Jensen不等式"><span class="toc-number">3.0.1.</span> <span class="toc-text">Jensen不等式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">4.</span> <span class="toc-text">小结</span></a></li></ol>
  
   </div>
 
